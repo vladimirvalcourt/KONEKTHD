@@ -26,10 +26,10 @@ const BP = {
 };
 
 const NAV_LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Community", href: "#community" },
-  { label: "App", href: "#app" },
+  { label: "Features", sectionId: "features" },
+  { label: "How It Works", sectionId: "how-it-works" },
+  { label: "Community", sectionId: "community" },
+  { label: "App", sectionId: "app" },
 ];
 
 const STATS_ITEMS = [
@@ -38,6 +38,20 @@ const STATS_ITEMS = [
   { num: 50000, suffix: "+", label: "Community Members" },
   { num: 98, suffix: "%", label: "User Satisfaction" },
 ];
+
+function scrollToTop() {
+  if (typeof window === "undefined") return;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+}
+
+function scrollToSection(sectionId) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+  window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+}
 
 // ─── FONTS ────────────────────────────────────────────────────────────────────
 const FONT_STYLE = `
@@ -119,34 +133,42 @@ function Nav({ viewportWidth }) {
         borderBottom: scrolled ? `1px solid ${T.mutedLow}` : "none",
         transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)" }}>
       {/* Logo */}
-      <a href="#" style={{ textDecoration:"none", cursor:"pointer" }}>
+      <button
+        type="button"
+        onClick={scrollToTop}
+        style={{ textDecoration:"none", cursor:"pointer", background:"transparent", border:"none", padding:0 }}
+      >
         <div style={{ fontFamily:"'Playfair Display', serif", fontWeight:900, fontSize:"22px",
           letterSpacing:"0.06em", color: T.cream }}>
           KON<span style={{ color: T.gold }}>EKT</span>
         </div>
-      </a>
+      </button>
       {/* Desktop links */}
       <div style={{ display:"flex", gap:viewportWidth <= BP.md ? "16px" : "40px", alignItems:"center" }}>
         {activeLinks.map((link, i) => (
-          <Motion.a key={link.label} href={link.href}
+          <Motion.button key={link.label} type="button"
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 + i * 0.08 }}
             style={{ fontFamily:"'Outfit',sans-serif", fontSize:viewportWidth <= BP.md ? "11px" : "13px", letterSpacing:"0.1em",
               textTransform:"uppercase", color: T.muted, textDecoration:"none", cursor:"pointer",
+              background:"transparent", border:"none", padding:0,
               transition:"color 0.3s" }}
+            onClick={() => scrollToSection(link.sectionId)}
             onMouseEnter={e => e.target.style.color = T.gold}
-            onMouseLeave={e => e.target.style.color = T.muted}>{link.label}</Motion.a>
+            onMouseLeave={e => e.target.style.color = T.muted}>{link.label}</Motion.button>
         ))}
-        <Motion.a href="#download" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
+        <Motion.button type="button" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
           transition={{ delay: 0.8 }}
+          onClick={() => scrollToSection("download")}
           style={{ fontFamily:"'Outfit',sans-serif", fontWeight:600, fontSize:"12px",
             letterSpacing:"0.14em", textTransform:"uppercase", color: T.black,
             background: T.gold, padding:viewportWidth <= BP.md ? "10px 16px" : "11px 28px", textDecoration:"none", cursor:"pointer",
+            border:"none",
             transition:"background 0.3s, transform 0.2s" }}
           onMouseEnter={e => { e.target.style.background = T.goldLight; e.target.style.transform = "translateY(-2px)"; }}
           onMouseLeave={e => { e.target.style.background = T.gold; e.target.style.transform = "translateY(0)"; }}>
           Get App
-        </Motion.a>
+        </Motion.button>
       </div>
     </Motion.nav>
   );
@@ -300,7 +322,7 @@ function Hero({ viewportWidth }) {
 function StoreBtn({ store }) {
   const [hov, setHov] = useState(false);
   return (
-    <a href="#download" data-hover style={{ cursor:"pointer", textDecoration:"none",
+    <button type="button" onClick={() => scrollToSection("download")} data-hover style={{ cursor:"pointer", textDecoration:"none",
       display:"flex", alignItems:"center", gap:"14px", padding:"14px 22px",
       border:`1px solid ${hov ? T.gold : "rgba(242,237,228,0.2)"}`,
       background: hov ? T.goldDim : "rgba(8,8,8,0.5)",
@@ -326,7 +348,7 @@ function StoreBtn({ store }) {
           {store === "apple" ? "App Store" : "Google Play"}
         </div>
       </div>
-    </a>
+    </button>
   );
 }
 
@@ -1102,6 +1124,11 @@ function Footer({ viewportWidth }) {
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function KonektLanding() {
   const viewportWidth = useViewportWidth();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.location.hash) return;
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+  }, []);
   const pathname = typeof window !== "undefined"
     ? (window.location.pathname.replace(/\/+$/, "") || "/")
     : "/";
