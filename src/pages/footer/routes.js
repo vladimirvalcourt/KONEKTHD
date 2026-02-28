@@ -26,6 +26,7 @@ const FOOTER_ROUTE_COMPONENTS = {
   "/privacy-policy": PrivacyPolicyPage,
   "/privacy": PrivacyPolicyPage,
   "/terms-of-service": TermsOfServicePage,
+  "/terms": TermsOfServicePage,
 };
 
 export default FOOTER_ROUTE_COMPONENTS;

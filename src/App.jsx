@@ -1063,7 +1063,7 @@ const FOOTER_COLUMNS = [
       { label:"Help Center", href:"/help-center" },
       { label:"Contact Support", href:"/contact-support" },
       { label:"Privacy Policy", href:"/privacy-policy" },
-      { label:"Terms of Service", href:"/terms-of-service" },
+      { label:"Terms of Service", href:"/terms" },
     ],
   },
 ];
