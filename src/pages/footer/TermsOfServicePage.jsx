@@ -3,7 +3,7 @@ import InfoPageLayout from "./InfoPageLayout";
 const page = {
   group: "Support",
   title: "Terms of Service",
-  intro: "By using Konektedht, you agree to these terms:",
+  intro: "By using Konekt, you agree to these terms:",
   sections: [
     {
       h: "User-Generated Content (UGC)",

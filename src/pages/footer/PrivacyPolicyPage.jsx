@@ -2,8 +2,8 @@ import InfoPageLayout from "./InfoPageLayout";
 
 const page = {
   group: "Support",
-  title: "Privacy Policy for Konektedht",
-  intro: "Last Updated: February 28, 2026. Konektedht (\"we\", \"us\", or \"our\") operates the Konektedht mobile application. We respect your privacy and are committed to protecting your personal data.",
+  title: "Privacy Policy for Konekt",
+  intro: "Last Updated: February 28, 2026. Konekt (\"we\", \"us\", or \"our\") operates the Konekt mobile application. We respect your privacy and are committed to protecting your personal data.",
   sections: [
     {
       h: "Data We Collect",
