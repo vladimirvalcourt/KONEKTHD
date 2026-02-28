@@ -1,5 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView, useReducedMotion } from "framer-motion";
+import FOOTER_ROUTE_COMPONENTS from "./pages/footer/routes";
+import NotFoundPage from "./pages/NotFoundPage";
+const HERO_WORDS = ["Discover.", "Connect.", "Belong."];
+const Motion = motion;
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const T = {
@@ -13,21 +17,27 @@ const T = {
   muted: "rgba(242,237,228,0.45)",
   mutedLow: "rgba(242,237,228,0.12)",
 };
-const HERO_WORDS = ["Discover.", "Connect.", "Belong."];
+
+const BP = {
+  xl: 1200,
+  lg: 992,
+  md: 768,
+  sm: 560,
+};
+
+const NAV_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Community", href: "#community" },
+  { label: "App", href: "#app" },
+];
+
 const STATS_ITEMS = [
   { num: 5000, suffix: "+", label: "Businesses Listed" },
   { num: 32, suffix: "+", label: "States & Cities" },
   { num: 50000, suffix: "+", label: "Community Members" },
   { num: 98, suffix: "%", label: "User Satisfaction" },
 ];
-const HOW_IT_WORKS_STEPS = [
-  { n:"01", title:"Create Your Account", desc:"Sign up in seconds with email or phone. Join thousands already building connections in the network." },
-  { n:"02", title:"Explore Businesses", desc:"Browse by category, location, or keyword. Restaurants, lawyers, doctors, mechanics — all Haitian-owned, all verified." },
-  { n:"03", title:"Connect & Support", desc:"Call, message, book, or visit directly from the app. Leave reviews and refer friends to strengthen the community." },
-  { n:"04", title:"List Your Business", desc:"Own a business? Create your profile in minutes and reach thousands already searching for your services." },
-];
-const CATEGORY_ITEMS = ["🍽 Restaurants","⚖️ Legal","🏥 Healthcare","🏠 Real Estate","💇 Beauty","🚗 Auto",
-  "💻 Technology","🎨 Creative","💰 Finance","🎓 Education","🛍 Retail","🏗 Construction"];
 
 // ─── FONTS ────────────────────────────────────────────────────────────────────
 const FONT_STYLE = `
@@ -40,7 +50,33 @@ const FONT_STYLE = `
   ::-webkit-scrollbar-track { background: ${T.black}; }
   ::-webkit-scrollbar-thumb { background: ${T.gold}; }
 `;
-const Motion = motion;
+
+function useViewportWidth() {
+  const [width, setWidth] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 1440));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return width;
+}
+
+function getSectionPadding(viewportWidth, options = {}) {
+  const {
+    desktop = "140px 60px",
+    xl = "130px 48px",
+    tablet = "110px 36px",
+    mobile = "90px 20px",
+  } = options;
+
+  if (viewportWidth <= BP.md) return mobile;
+  if (viewportWidth <= BP.lg) return tablet;
+  if (viewportWidth <= BP.xl) return xl;
+  return desktop;
+}
 
 // ─── NOISE TEXTURE ────────────────────────────────────────────────────────────
 const Noise = () => (
@@ -61,19 +97,22 @@ function ProgressBar() {
 }
 
 // ─── NAV ──────────────────────────────────────────────────────────────────────
-function Nav() {
+function Nav({ viewportWidth }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
-  const links = ["Features", "How It Works", "Community", "App"];
+  const navPadX = viewportWidth <= BP.md ? 20 : viewportWidth <= BP.lg ? 36 : viewportWidth <= BP.xl ? 48 : 60;
+  const navPadY = scrolled ? 14 : viewportWidth <= BP.md ? 16 : 28;
+  const showLinks = viewportWidth > BP.sm;
+  const activeLinks = showLinks ? NAV_LINKS : NAV_LINKS.filter((l) => l.label === "App");
   return (
-    <motion.nav initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+    <Motion.nav initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       style={{ position:"fixed", top:0, left:0, right:0, zIndex:600,
-        padding: scrolled ? "14px 60px" : "28px 60px",
+        padding: `${navPadY}px ${navPadX}px`,
         display:"flex", alignItems:"center", justifyContent:"space-between",
         background: scrolled ? "rgba(8,8,8,0.88)" : "transparent",
         backdropFilter: scrolled ? "blur(20px)" : "none",
@@ -87,48 +126,53 @@ function Nav() {
         </div>
       </a>
       {/* Desktop links */}
-      <div style={{ display:"flex", gap:"40px", alignItems:"center" }}>
-        {links.map((l, i) => (
-          <motion.a key={l} href={`#${l.toLowerCase().replace(" ", "-")}`}
+      <div style={{ display:"flex", gap:viewportWidth <= BP.md ? "16px" : "40px", alignItems:"center" }}>
+        {activeLinks.map((link, i) => (
+          <Motion.a key={link.label} href={link.href}
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 + i * 0.08 }}
-            style={{ fontFamily:"'Outfit',sans-serif", fontSize:"13px", letterSpacing:"0.1em",
+            style={{ fontFamily:"'Outfit',sans-serif", fontSize:viewportWidth <= BP.md ? "11px" : "13px", letterSpacing:"0.1em",
               textTransform:"uppercase", color: T.muted, textDecoration:"none", cursor:"pointer",
               transition:"color 0.3s" }}
             onMouseEnter={e => e.target.style.color = T.gold}
-            onMouseLeave={e => e.target.style.color = T.muted}>{l}</motion.a>
+            onMouseLeave={e => e.target.style.color = T.muted}>{link.label}</Motion.a>
         ))}
-        <motion.a href="#download" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
+        <Motion.a href="#download" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
           transition={{ delay: 0.8 }}
           style={{ fontFamily:"'Outfit',sans-serif", fontWeight:600, fontSize:"12px",
             letterSpacing:"0.14em", textTransform:"uppercase", color: T.black,
-            background: T.gold, padding:"11px 28px", textDecoration:"none", cursor:"pointer",
+            background: T.gold, padding:viewportWidth <= BP.md ? "10px 16px" : "11px 28px", textDecoration:"none", cursor:"pointer",
             transition:"background 0.3s, transform 0.2s" }}
           onMouseEnter={e => { e.target.style.background = T.goldLight; e.target.style.transform = "translateY(-2px)"; }}
           onMouseLeave={e => { e.target.style.background = T.gold; e.target.style.transform = "translateY(0)"; }}>
           Get App
-        </motion.a>
+        </Motion.a>
       </div>
-    </motion.nav>
+    </Motion.nav>
   );
 }
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
-function Hero() {
+function Hero({ viewportWidth }) {
   const ref = useRef(null);
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const yRaw = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const opacityRaw = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const y = reduceMotion ? 0 : yRaw;
+  const opacity = reduceMotion ? 1 : opacityRaw;
 
   const [wordIdx, setWordIdx] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setWordIdx(i => (i + 1) % HERO_WORDS.length), 2200);
+    const id = setInterval(() => setWordIdx(i => (i + 1) % HERO_WORDS.length), 1300);
     return () => clearInterval(id);
   }, []);
 
   return (
     <section ref={ref} style={{ minHeight:"100vh", position:"relative", display:"flex",
-      flexDirection:"column", justifyContent:"flex-end", padding:"0 60px 90px", overflow:"hidden" }}>
+      flexDirection:"column", justifyContent:"flex-end",
+      padding: viewportWidth <= BP.md ? "0 20px 72px" : viewportWidth <= BP.lg ? "0 36px 80px" : "0 60px 90px",
+      overflow:"hidden" }}>
       {/* BG layers */}
       <div style={{ position:"absolute", inset:0, zIndex:0 }}>
         {/* Haitian-flag split */}
@@ -149,49 +193,49 @@ function Hero() {
 
       <style>{`@keyframes pulse { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.2); } }`}</style>
 
-      <motion.div style={{ position:"relative", zIndex:2, y, opacity }}>
+      <Motion.div style={{ position:"relative", zIndex:2, y, opacity }}>
         {/* Eyebrow */}
-        <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }}
-          transition={{ duration:0.8, delay:0.6 }}
+        <Motion.div initial={reduceMotion ? { opacity:0 } : { opacity:0, x:-20 }} animate={{ opacity:1, x:0 }}
+          transition={{ duration: reduceMotion ? 0.2 : 0.45, delay: reduceMotion ? 0.05 : 0.15 }}
           style={{ display:"flex", alignItems:"center", gap:"14px", marginBottom:"32px" }}>
           <div style={{ width:"36px", height:"1px", background: T.gold }} />
           <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"11px", letterSpacing:"0.24em",
             textTransform:"uppercase", color: T.gold }}>Haitian Business Discovery</span>
-        </motion.div>
+        </Motion.div>
 
         {/* Main headline */}
         <div style={{ overflow:"hidden" }}>
-          <motion.h1 initial={{ y:"100%" }} animate={{ y:"0%" }}
-            transition={{ duration:1, delay:0.8, ease:[0.16,1,0.3,1] }}
+          <Motion.h1 initial={reduceMotion ? { opacity:0 } : { y:"100%" }} animate={reduceMotion ? { opacity:1 } : { y:"0%" }}
+            transition={{ duration:reduceMotion ? 0.2 : 0.62, delay:reduceMotion ? 0.1 : 0.28, ease:[0.16,1,0.3,1] }}
             style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
               fontSize:"clamp(68px, 11vw, 160px)", lineHeight:0.88,
               letterSpacing:"-0.02em", color: T.cream, display:"block" }}>
             The Haitian
-          </motion.h1>
+          </Motion.h1>
         </div>
         <div style={{ overflow:"hidden" }}>
-          <motion.div initial={{ y:"100%" }} animate={{ y:"0%" }}
-            transition={{ duration:1, delay:0.95, ease:[0.16,1,0.3,1] }}
+          <Motion.div initial={reduceMotion ? { opacity:0 } : { y:"100%" }} animate={reduceMotion ? { opacity:1 } : { y:"0%" }}
+            transition={{ duration:reduceMotion ? 0.2 : 0.62, delay:reduceMotion ? 0.16 : 0.38, ease:[0.16,1,0.3,1] }}
             style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
               fontSize:"clamp(68px, 11vw, 160px)", lineHeight:0.88,
               letterSpacing:"-0.02em", color:"transparent",
               WebkitTextStroke:`1px ${T.cream}`, display:"block" }}>
             Business
-          </motion.div>
+          </Motion.div>
         </div>
         <div style={{ display:"flex", alignItems:"baseline", gap:"24px", overflow:"hidden" }}>
-          <motion.div initial={{ y:"100%" }} animate={{ y:"0%" }}
-            transition={{ duration:1, delay:1.1, ease:[0.16,1,0.3,1] }}
+          <Motion.div initial={reduceMotion ? { opacity:0 } : { y:"100%" }} animate={reduceMotion ? { opacity:1 } : { y:"0%" }}
+            transition={{ duration:reduceMotion ? 0.2 : 0.62, delay:reduceMotion ? 0.22 : 0.48, ease:[0.16,1,0.3,1] }}
             style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
               fontSize:"clamp(68px, 11vw, 160px)", lineHeight:0.88,
               letterSpacing:"-0.02em", color: T.gold, display:"block" }}>
             Network.
-          </motion.div>
+          </Motion.div>
         </div>
 
         {/* Subline + CTAs */}
-        <motion.div initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }}
-          transition={{ duration:0.9, delay:1.4, ease:[0.16,1,0.3,1] }}
+        <Motion.div initial={reduceMotion ? { opacity:0 } : { opacity:0, y:30 }} animate={{ opacity:1, y:0 }}
+          transition={{ duration:reduceMotion ? 0.22 : 0.55, delay:reduceMotion ? 0.28 : 0.62, ease:[0.16,1,0.3,1] }}
           style={{ marginTop:"52px", display:"flex", alignItems:"flex-end",
             justifyContent:"space-between", gap:"40px", flexWrap:"wrap" }}>
           <div style={{ maxWidth:"500px" }}>
@@ -205,15 +249,15 @@ function Hero() {
             <div style={{ display:"flex", alignItems:"center", gap:"16px" }}>
               <div style={{ width:"2px", height:"52px", background:`linear-gradient(${T.gold}, ${T.red})` }} />
               <AnimatePresence mode="wait">
-                <motion.span key={wordIdx}
-                  initial={{ opacity:0, y:16, filter:"blur(8px)" }}
-                  animate={{ opacity:1, y:0, filter:"blur(0px)" }}
-                  exit={{ opacity:0, y:-16, filter:"blur(8px)" }}
-                  transition={{ duration:0.5, ease:[0.16,1,0.3,1] }}
+                <Motion.span key={wordIdx}
+                  initial={reduceMotion ? { opacity:0 } : { opacity:0, y:16, filter:"blur(8px)" }}
+                  animate={reduceMotion ? { opacity:1 } : { opacity:1, y:0, filter:"blur(0px)" }}
+                  exit={reduceMotion ? { opacity:0 } : { opacity:0, y:-16, filter:"blur(8px)" }}
+                  transition={{ duration:reduceMotion ? 0.18 : 0.28, ease:[0.16,1,0.3,1] }}
                   style={{ fontFamily:"'Playfair Display',serif", fontStyle:"italic",
                     fontSize:"clamp(28px, 3vw, 42px)", color: T.gold }}>
                   {HERO_WORDS[wordIdx]}
-                </motion.span>
+                </Motion.span>
               </AnimatePresence>
             </div>
           </div>
@@ -223,19 +267,31 @@ function Hero() {
             <StoreBtn store="apple" />
             <StoreBtn store="google" />
           </div>
-        </motion.div>
-      </motion.div>
+        </Motion.div>
+      </Motion.div>
+
+      {/* Scroll indicator */}
+      <Motion.div initial={{ opacity:0 }} animate={{ opacity: viewportWidth <= BP.sm ? 0 : 1 }} transition={{ delay:0.8 }}
+        style={{ position:"absolute", bottom:"40px", right:"60px", zIndex:3,
+          display: viewportWidth <= BP.sm ? "none" : "flex", flexDirection:"column", alignItems:"center", gap:"10px" }}>
+        <div style={{ width:"1px", height:"72px", background:`linear-gradient(${T.gold}, transparent)`,
+          animation:"scrollLine 2.2s ease-in-out infinite" }} />
+        <style>{`@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }`}</style>
+        <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"9px", letterSpacing:"0.22em",
+          textTransform:"uppercase", color: T.muted, writingMode:"vertical-rl" }}>Scroll</span>
+      </Motion.div>
 
       {/* Corner stat */}
-      <motion.div initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }}
-        transition={{ delay:1.8 }}
+      <Motion.div initial={{ opacity:0, x:20 }} animate={{ opacity: viewportWidth <= BP.sm ? 0 : 1, x:0 }}
+        transition={{ delay:0.72 }}
         style={{ position:"absolute", top:"120px", right:"60px", zIndex:3,
-          borderLeft:`1px solid ${T.gold}`, paddingLeft:"20px" }}>
+          borderLeft:`1px solid ${T.gold}`, paddingLeft:"20px",
+          display: viewportWidth <= BP.sm ? "none" : "block" }}>
         <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:900, fontSize:"48px",
           lineHeight:1, color: T.cream }}>5K<span style={{ color: T.gold }}>+</span></div>
         <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:"11px", letterSpacing:"0.14em",
           textTransform:"uppercase", color: T.muted, marginTop:"4px" }}>Businesses</div>
-      </motion.div>
+      </Motion.div>
     </section>
   );
 }
@@ -337,14 +393,15 @@ const storySlides = [
 ];
 
 function StorySlide({ slide, containerRef, segStart, segEnd }) {
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
 
   const opacity = useTransform(scrollYProgress,
     [segStart, segStart + 0.08, segEnd - 0.08, segEnd], [0, 1, 1, 0]);
   const yRaw = useTransform(scrollYProgress,
-    [segStart, segStart + 0.08, segEnd - 0.08, segEnd], [90, 0, 0, -90]);
+    [segStart, segStart + 0.08, segEnd - 0.08, segEnd], reduceMotion ? [20, 0, 0, -20] : [70, 0, 0, -70]);
   const blurRaw = useTransform(scrollYProgress,
-    [segStart, segStart + 0.06, segEnd - 0.06, segEnd], [14, 0, 0, 14]);
+    [segStart, segStart + 0.06, segEnd - 0.06, segEnd], reduceMotion ? [0, 0, 0, 0] : [10, 0, 0, 10]);
   const filter = useTransform(blurRaw, b => `blur(${b}px)`);
   const y = useSpring(yRaw, { stiffness: 70, damping: 20 });
   const opacityS = useSpring(opacity, { stiffness: 90, damping: 24 });
@@ -353,7 +410,7 @@ function StorySlide({ slide, containerRef, segStart, segEnd }) {
   const textAlign = { left:"left", center:"center", right:"right" };
 
   return (
-    <motion.div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column",
+    <Motion.div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column",
       alignItems: alignMap[slide.align], justifyContent:"center",
       padding:"0 clamp(28px, 8vw, 120px)", pointerEvents:"none",
       opacity: opacityS, y, filter }}>
@@ -380,39 +437,34 @@ function StorySlide({ slide, containerRef, segStart, segEnd }) {
           marginLeft: slide.align === "left" ? "0" : "auto",
           marginRight: slide.align === "right" ? "0" : "auto" }}>{slide.body}</p>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 }
 
-function StoryProgressDot({ scrollYProgress, index }) {
-  const segStart = index / storySlides.length;
-  const segEnd = (index + 1) / storySlides.length;
-  const dotOpacity = useTransform(
-    scrollYProgress,
-    [segStart, segStart + 0.05, segEnd - 0.05, segEnd],
-    [0.18, 1, 1, 0.18],
-  );
-
+function StoryProgressDot({ scrollYProgress, index, total }) {
+  const start = index / total;
+  const end = (index + 1) / total;
+  const opacity = useTransform(scrollYProgress, [start, start + 0.05, end - 0.05, end], [0.18, 1, 1, 0.18]);
   return (
-    <motion.div style={{ width:"5px", height:"5px", borderRadius:"50%",
-      background: T.gold, opacity: dotOpacity }} />
+    <Motion.div style={{ width:"5px", height:"5px", borderRadius:"50%", background: T.gold, opacity }} />
   );
 }
 
-function ScrollStory() {
+function ScrollStory({ viewportWidth }) {
+  const reduceMotion = useReducedMotion();
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
 
   // Ambient orb pos
-  const orbX = useTransform(scrollYProgress, [0, 1], ["15%", "85%"]);
-  const orbX2 = useTransform(scrollYProgress, [0, 1], ["80%", "20%"]);
+  const orbX = useTransform(scrollYProgress, [0, 1], reduceMotion ? ["50%", "50%"] : ["20%", "80%"]);
+  const orbX2 = useTransform(scrollYProgress, [0, 1], reduceMotion ? ["50%", "50%"] : ["75%", "25%"]);
 
   // Big ghost number
   const numVal = useTransform(scrollYProgress, v =>
     String(Math.min(Math.floor(v * storySlides.length) + 1, storySlides.length)));
 
   return (
-    <div ref={containerRef} style={{ height:`${storySlides.length * 130}vh`, position:"relative" }}
+    <div ref={containerRef} style={{ height:`${storySlides.length * (viewportWidth <= BP.md ? 115 : 130)}vh`, position:"relative" }}
       id="features">
       {/* Sticky viewport */}
       <div style={{ position:"sticky", top:0, height:"100vh", overflow:"hidden", background: T.black }}>
@@ -422,21 +474,21 @@ function ScrollStory() {
           backgroundSize:"100px 100px", opacity:0.5 }} />
 
         {/* Moving ambient orbs */}
-        <motion.div style={{ position:"absolute", width:"700px", height:"700px", borderRadius:"50%",
+        <Motion.div style={{ position:"absolute", width:"700px", height:"700px", borderRadius:"50%",
           background:`radial-gradient(circle, rgba(15,35,71,0.35) 0%, transparent 65%)`,
-          top:"50%", left: orbX, translateX:"-50%", translateY:"-50%", filter:"blur(80px)" }} />
-        <motion.div style={{ position:"absolute", width:"500px", height:"500px", borderRadius:"50%",
+          top:"50%", left: orbX, translateX:"-50%", translateY:"-50%", filter:"blur(60px)" }} />
+        <Motion.div style={{ position:"absolute", width:"500px", height:"500px", borderRadius:"50%",
           background:`radial-gradient(circle, rgba(200,145,58,0.1) 0%, transparent 65%)`,
-          top:"50%", left: orbX2, translateX:"-50%", translateY:"-50%", filter:"blur(100px)" }} />
+          top:"50%", left: orbX2, translateX:"-50%", translateY:"-50%", filter:"blur(80px)" }} />
 
         {/* Ghost number */}
-        <motion.div style={{ position:"absolute", bottom:"-60px", right:"clamp(20px,5vw,80px)",
+        <Motion.div style={{ position:"absolute", bottom:"-60px", right:"clamp(20px,5vw,80px)",
           fontFamily:"'Playfair Display',serif", fontWeight:900,
           fontSize:"clamp(200px, 30vw, 380px)", lineHeight:1,
           color:"transparent", WebkitTextStroke:`1px rgba(200,145,58,0.07)`,
           userSelect:"none", pointerEvents:"none" }}>
-          <motion.span>{numVal}</motion.span>
-        </motion.div>
+          <Motion.span>{numVal}</Motion.span>
+        </Motion.div>
 
         {/* Slides */}
         {storySlides.map((slide, i) => {
@@ -452,10 +504,16 @@ function ScrollStory() {
           transform:"translateY(-50%)", display:"flex", flexDirection:"column",
           gap:"10px", zIndex:10 }}>
           {storySlides.map((_, i) => (
-            <StoryProgressDot key={i} scrollYProgress={scrollYProgress} index={i} />
+            <StoryProgressDot key={i} scrollYProgress={scrollYProgress} index={i} total={storySlides.length} />
           ))}
         </div>
 
+        {/* Wordmark */}
+        <div style={{ position:"absolute", bottom:"36px", left:"clamp(28px,8vw,120px)",
+          fontFamily:"'Outfit',sans-serif", fontSize:"11px", letterSpacing:"0.2em",
+          color:"rgba(242,237,228,0.15)", textTransform:"uppercase" }}>
+          KONEKT — Haitian Business Discovery
+        </div>
       </div>
     </div>
   );
@@ -485,32 +543,37 @@ function Counter({ target, suffix }) {
   );
 }
 
-function StatCard({ stat, index }) {
+function StatCard({ stat, index, columns, compact }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const showRightBorder = columns === 4 ? index < 3 : columns === 2 ? index % 2 === 0 : false;
+  const showBottomBorder = columns === 2 ? index < 2 : false;
 
   return (
-    <motion.div ref={ref}
+    <Motion.div ref={ref}
       initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
-      transition={{ duration:0.7, delay: index * 0.12, ease:[0.16,1,0.3,1] }}
-      style={{ padding:"60px 48px",
-        borderRight: index < STATS_ITEMS.length - 1 ? `1px solid ${T.mutedLow}` : "none" }}>
+      transition={{ duration:0.7, delay: index * 0.1, ease:[0.16,1,0.3,1] }}
+      style={{ padding: compact ? "44px 24px" : "60px 48px",
+        borderRight: showRightBorder ? `1px solid ${T.mutedLow}` : "none",
+        borderBottom: showBottomBorder ? `1px solid ${T.mutedLow}` : "none" }}>
       <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
         fontSize:"clamp(42px, 5vw, 68px)", lineHeight:1, color: T.cream, marginBottom:"10px" }}>
         <Counter target={stat.num} suffix={stat.suffix} />
       </div>
       <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:"12px",
         letterSpacing:"0.1em", textTransform:"uppercase", color: T.muted }}>{stat.label}</div>
-    </motion.div>
+    </Motion.div>
   );
 }
 
-function Stats() {
+function Stats({ viewportWidth }) {
+  const columns = viewportWidth <= BP.sm ? 1 : viewportWidth <= BP.lg ? 2 : 4;
+  const compact = viewportWidth <= BP.md;
   return (
-    <section style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)",
+    <section style={{ display:"grid", gridTemplateColumns:`repeat(${columns},1fr)`,
       borderTop:`1px solid ${T.mutedLow}`, borderBottom:`1px solid ${T.mutedLow}` }}>
       {STATS_ITEMS.map((stat, index) => (
-        <StatCard key={stat.label} stat={stat} index={index} />
+        <StatCard key={stat.label} stat={stat} index={index} columns={columns} compact={compact} />
       ))}
     </section>
   );
@@ -532,109 +595,42 @@ const features = [
     title:"Business Analytics", desc:"Profile views, search impressions, customer inquiries. Data-driven growth for owners." },
 ];
 
-function FeatureCardContent({ f }) {
+function FeatureCard({ f, i, compact }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin:"-80px" });
+  const [hov, setHov] = useState(false);
   return (
-    <>
+    <Motion.div ref={ref}
+      initial={{ opacity:0, y:40 }} animate={inView ? { opacity:1, y:0 } : {}}
+      transition={{ duration:0.7, delay: i * 0.09, ease:[0.16,1,0.3,1] }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      data-hover
+      style={{ padding:"48px 40px", border:`1px solid ${hov ? "rgba(200,145,58,0.3)" : T.mutedLow}`,
+        background: hov ? "rgba(200,145,58,0.05)" : "rgba(242,237,228,0.02)",
+        position:"relative", overflow:"hidden", cursor:"default", minHeight: compact ? "auto" : "320px",
+        transition:"all 0.4s cubic-bezier(0.16,1,0.3,1)" }}>
+      {/* Top shimmer */}
+      <div style={{ position:"absolute", top:0, left:0, right:0, height:"1px",
+        background:`linear-gradient(90deg, transparent, ${T.gold}, transparent)`,
+        opacity: hov ? 1 : 0, transition:"opacity 0.4s" }} />
       <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"10px", letterSpacing:"0.2em",
         color: T.muted, display:"block", marginBottom:"28px" }}>{f.n}</span>
-      <svg viewBox="0 0 24 24" style={{ width:"42px", height:"42px", color: T.gold, marginBottom:"24px", display:"block" }}>
-        {f.icon}
-      </svg>
       <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize:"22px",
         color: T.cream, marginBottom:"14px" }}>{f.title}</div>
-      <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px", lineHeight:1.75, color: T.muted }}>
-        {f.desc}
-      </p>
-    </>
+      <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px", lineHeight:1.75,
+        color: T.muted }}>{f.desc}</p>
+    </Motion.div>
   );
 }
 
-function DeckBackCard({ f, layer, reduceMotion }) {
-  const yOffset = layer === 1 ? 14 : 28;
-  const scale = layer === 1 ? 0.96 : 0.92;
-  const opacity = layer === 1 ? 0.6 : 0.34;
-  const rotate = layer === 1 ? -1.2 : -2.1;
-
-  return (
-    <motion.div
-      aria-hidden="true"
-      initial={false}
-      animate={reduceMotion ? { opacity } : { y: yOffset, scale, opacity, rotate }}
-      transition={{ type:"spring", stiffness:230, damping:28, mass:0.8 }}
-      style={{ position:"absolute", inset:0, padding:"48px 40px",
-        border:`1px solid ${T.mutedLow}`, background:"rgba(242,237,228,0.02)",
-        overflow:"hidden", pointerEvents:"none", transformOrigin:"top center" }}>
-      <FeatureCardContent f={f} />
-    </motion.div>
-  );
-}
-
-function DeckActiveCard({ f, direction, onAdvance, reduceMotion }) {
-  const dir = direction >= 0 ? 1 : -1;
-  const easeOut = [0.16, 1, 0.3, 1];
-  const initial = reduceMotion
-    ? { opacity:0, x: 8 * dir }
-    : { opacity:0, x: 26 * dir, rotate: 2 * dir, scale: 0.985 };
-  const animate = reduceMotion
-    ? { opacity:1, x:0 }
-    : { opacity:1, x:0, rotate:0, scale:1 };
-  const exit = reduceMotion
-    ? { opacity:0, x: -8 * dir }
-    : { opacity:0, x: -32 * dir, rotate: -3 * dir, scale:0.97 };
-
-  const onKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onAdvance();
-    }
-  };
-
-  return (
-    <motion.button
-      type="button"
-      onClick={onAdvance}
-      onKeyDown={onKeyDown}
-      data-hover
-      initial={initial}
-      animate={animate}
-      exit={exit}
-      transition={{ duration:0.42, ease:easeOut }}
-      style={{ position:"absolute", inset:0, zIndex:3, textAlign:"left", width:"100%",
-        border:`1px solid rgba(200,145,58,0.35)`, background:"rgba(200,145,58,0.07)",
-        padding:"48px 40px", cursor:"pointer", color:"inherit",
-        boxShadow:"0 18px 48px rgba(0,0,0,0.35)", overflow:"hidden" }}>
-      <div style={{ position:"absolute", top:0, left:0, right:0, height:"1px",
-        background:`linear-gradient(90deg, transparent, ${T.gold}, transparent)` }} />
-      <FeatureCardContent f={f} />
-      <div style={{ position:"absolute", left:0, right:0, bottom:0, height:"40px", display:"flex",
-        alignItems:"center", padding:"0 14px", fontFamily:"'Outfit',sans-serif", fontSize:"10px", fontWeight:600,
-        letterSpacing:"0.14em", textTransform:"uppercase", color:T.gold,
-        background:"linear-gradient(180deg, rgba(200,145,58,0.16) 0%, rgba(200,145,58,0.3) 100%)",
-        borderTop:`1px solid rgba(200,145,58,0.35)`, pointerEvents:"none" }}>
-        Click to view next feature →
-      </div>
-    </motion.button>
-  );
-}
-
-function Features() {
+function Features({ viewportWidth }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
-  const reduceMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const ordered = features.map((_, offset) => features[(activeIndex + offset) % features.length]);
-  const activeFeature = ordered[0];
-  const stackFeatures = ordered.slice(1, 3);
-
-  const nextFeature = () => {
-    setDirection(1);
-    setActiveIndex((prev) => (prev + 1) % features.length);
-  };
-
+  const cols = viewportWidth <= BP.md ? 1 : viewportWidth <= BP.lg ? 2 : 3;
+  const gap = viewportWidth <= BP.md ? "10px" : "12px";
   return (
-    <section style={{ padding:"140px 60px", background:"#0C0C0C" }} id="how-it-works">
-      <motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
+    <section style={{ padding:getSectionPadding(viewportWidth), background:"#0C0C0C" }}>
+      <Motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
         transition={{ duration:0.8 }} style={{ maxWidth:"700px", marginBottom:"80px" }}>
         <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"24px" }}>
           <div style={{ width:"24px", height:"1px", background: T.gold }} />
@@ -644,97 +640,27 @@ function Features() {
         <h2 style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
           fontSize:"clamp(40px, 5.5vw, 76px)", lineHeight:1, letterSpacing:"-0.02em",
           color: T.cream }}>Built for our<br /><em style={{ color: T.gold }}>community</em></h2>
-      </motion.div>
-      <div style={{ display:"flex", justifyContent:"center" }}>
-        <div style={{ position:"relative", width:"min(100%, 700px)", minHeight:"360px", height:"360px" }}>
-          {stackFeatures.map((f, idx) => (
-            <DeckBackCard key={`back-${f.n}`} f={f} layer={idx + 1} reduceMotion={reduceMotion} />
-          ))}
-          <AnimatePresence mode="popLayout" initial={false}>
-            <DeckActiveCard
-              key={`active-${activeFeature.n}-${activeIndex}`}
-              f={activeFeature}
-              direction={direction}
-              onAdvance={nextFeature}
-              reduceMotion={reduceMotion}
-            />
-          </AnimatePresence>
-        </div>
+      </Motion.div>
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${cols},1fr)`, gap }}>
+        {features.map((f, i) => <FeatureCard key={i} f={f} i={i} compact={cols === 1} />)}
       </div>
     </section>
   );
 }
 
 // ─── PHONE MOCKUP ─────────────────────────────────────────────────────────────
-function PhoneMockup({ offset = 0, rotate = 0, zIndex = 2, opacity = 1, interactive = false }) {
+function PhoneMockup({ offset = 0, rotate = 0, zIndex = 2, opacity = 1 }) {
   const cards = [
     { name:"Mama's Kitchen", sub:"Haitian Restaurant · Miami, FL", badge:"★ 4.9  Open Now", color: T.gold },
     { name:"Larose Law Firm", sub:"Legal Services · Brooklyn, NY", badge:"★ 4.8  Verified", color:"#5B8DB8" },
     { name:"ArtisanKreyol Studio", sub:"Creative Agency · Boston, MA", badge:"★ 5.0  Featured", color:"#7BAF6E" },
-    { name:"Kreyol Health Center", sub:"Healthcare · Orlando, FL", badge:"★ 4.9  Trusted", color:"#76A8D8" },
-    { name:"Nouvo Build Group", sub:"Construction · Newark, NJ", badge:"★ 4.7  Popular", color:"#D5A55B" },
-    { name:"Belle Vie Beauty", sub:"Beauty & Wellness · Queens, NY", badge:"★ 4.8  Featured", color:"#C27AA0" },
   ];
-  const [isHovered, setIsHovered] = useState(false);
-  const [canHover, setCanHover] = useState(false);
-  const [scrollRange, setScrollRange] = useState(0);
-  const viewportRef = useRef(null);
-  const trackRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
-    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const syncCanHover = () => setCanHover(mediaQuery.matches);
-    syncCanHover();
-    if (typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", syncCanHover);
-      return () => mediaQuery.removeEventListener("change", syncCanHover);
-    }
-    mediaQuery.addListener(syncCanHover);
-    return () => mediaQuery.removeListener(syncCanHover);
-  }, []);
-
-  useEffect(() => {
-    if (!interactive) return;
-    const measure = () => {
-      const viewportEl = viewportRef.current;
-      const trackEl = trackRef.current;
-      if (!viewportEl || !trackEl) return;
-      setScrollRange(Math.max(trackEl.scrollHeight - viewportEl.clientHeight, 0));
-    };
-    measure();
-
-    let resizeObserver;
-    if (typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(measure);
-      if (viewportRef.current) resizeObserver.observe(viewportRef.current);
-      if (trackRef.current) resizeObserver.observe(trackRef.current);
-    } else {
-      window.addEventListener("resize", measure);
-    }
-
-    return () => {
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      } else {
-        window.removeEventListener("resize", measure);
-      }
-    };
-  }, [interactive]);
-
-  const shouldAutoScroll = interactive && canHover && isHovered && scrollRange > 0;
-  const trackAnimation = shouldAutoScroll ? { y: [0, -scrollRange] } : { y: 0 };
-  const trackTransition = shouldAutoScroll
-    ? { duration: Math.max(scrollRange / 22, 8), ease: "linear", repeat: Infinity, repeatType: "reverse" }
-    : { duration: 0.45, ease: [0.16, 1, 0.3, 1] };
-
   return (
     <div style={{ width:"230px", background:"#111", borderRadius:"44px", padding:"10px",
       boxShadow:`0 0 0 1px rgba(255,255,255,0.07), 0 60px 120px rgba(0,0,0,0.85), 0 0 60px rgba(200,145,58,0.12)`,
       position:"absolute", transform:`rotate(${rotate}deg) translateY(${offset}px)`,
-      zIndex, opacity, pointerEvents: interactive ? "auto" : "none" }}
-      onMouseEnter={() => interactive && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+      zIndex, opacity, animation: zIndex === 2 ? "floatP 6s ease-in-out infinite" : "none" }}>
+      <style>{`@keyframes floatP { 0%,100%{transform:rotate(${rotate}deg) translateY(${offset}px)} 50%{transform:rotate(${rotate}deg) translateY(${offset - 14}px)} }`}</style>
       <div style={{ background:`linear-gradient(155deg, ${T.blue} 0%, #1A0A08 100%)`,
         borderRadius:"36px", padding:"18px 14px", aspectRatio:"9/19.5", display:"flex", flexDirection:"column" }}>
         <div style={{ width:"70px", height:"20px", background:"#000", borderRadius:"20px",
@@ -748,49 +674,45 @@ function PhoneMockup({ offset = 0, rotate = 0, zIndex = 2, opacity = 1, interact
           </svg>
           <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"10px", color: T.muted }}>Search businesses...</span>
         </div>
-        <div ref={viewportRef} style={{ flex:1, minHeight:0, overflow:"hidden", position:"relative" }}>
-          <motion.div ref={trackRef} animate={trackAnimation} transition={trackTransition}
-            style={{ display:"flex", flexDirection:"column" }}>
-            {cards.map((c, i) => (
-              <div key={i} style={{ background:"rgba(242,237,228,0.04)",
-                border:`1px solid rgba(242,237,228,0.08)`, borderRadius:"12px",
-                padding:"12px", marginBottom:"8px" }}>
-                <div style={{ fontFamily:"'Outfit',sans-serif", fontWeight:600, fontSize:"11px",
-                  color: T.cream, marginBottom:"3px" }}>{c.name}</div>
-                <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:"9px", color: T.muted }}>{c.sub}</div>
-                <div style={{ display:"inline-block", marginTop:"5px",
-                  background: c.color, color: T.black, fontFamily:"'Outfit',sans-serif",
-                  fontSize:"7px", fontWeight:700, padding:"2px 7px", borderRadius:"20px",
-                  letterSpacing:"0.08em" }}>{c.badge}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
+        {cards.map((c, i) => (
+          <div key={i} style={{ background:"rgba(242,237,228,0.04)",
+            border:`1px solid rgba(242,237,228,0.08)`, borderRadius:"12px",
+            padding:"12px", marginBottom:"8px" }}>
+            <div style={{ fontFamily:"'Outfit',sans-serif", fontWeight:600, fontSize:"11px",
+              color: T.cream, marginBottom:"3px" }}>{c.name}</div>
+            <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:"9px", color: T.muted }}>{c.sub}</div>
+            <div style={{ display:"inline-block", marginTop:"5px",
+              background: c.color, color: T.black, fontFamily:"'Outfit',sans-serif",
+              fontSize:"7px", fontWeight:700, padding:"2px 7px", borderRadius:"20px",
+              letterSpacing:"0.08em" }}>{c.badge}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function AppSection() {
+function AppSection({ viewportWidth }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin:"-100px" });
+  const stacked = viewportWidth <= BP.lg;
   return (
-    <section style={{ display:"grid", gridTemplateColumns:"1fr 1fr",
-      gap:"80px", padding:"140px 60px", alignItems:"center" }} id="app">
+    <section style={{ display:"grid", gridTemplateColumns: stacked ? "1fr" : "1fr 1fr",
+      gap: stacked ? "40px" : "80px", padding:getSectionPadding(viewportWidth), alignItems:"center" }} id="app">
       {/* Phones */}
-      <motion.div initial={{ opacity:0, x:-40 }} animate={inView ? { opacity:1, x:0 } : {}}
+      <Motion.div initial={{ opacity:0, x:-40 }} animate={inView ? { opacity:1, x:0 } : {}}
         transition={{ duration:0.9, ease:[0.16,1,0.3,1] }}
         style={{ position:"relative", height:"580px", display:"flex",
-          alignItems:"center", justifyContent:"center" }}>
+          alignItems:"center", justifyContent:"center", order: stacked ? 2 : 1 }}>
         <div style={{ position:"absolute", width:"480px", height:"480px", borderRadius:"50%",
           background:`radial-gradient(circle, rgba(200,145,58,0.14) 0%, transparent 65%)`,
           top:"50%", left:"50%", transform:"translate(-50%,-50%)", filter:"blur(40px)" }} />
-        <PhoneMockup offset={0} rotate={0} zIndex={2} opacity={1} interactive />
-        <PhoneMockup offset={20} rotate={-7} zIndex={1} opacity={0.55} interactive={false} />
-      </motion.div>
+        <PhoneMockup offset={0} rotate={0} zIndex={2} opacity={1} />
+        <PhoneMockup offset={20} rotate={-7} zIndex={1} opacity={0.55} />
+      </Motion.div>
 
       {/* Content */}
-      <motion.div ref={ref} initial={{ opacity:0, x:40 }} animate={inView ? { opacity:1, x:0 } : {}}
+      <Motion.div ref={ref} initial={{ opacity:0, x:40 }} animate={inView ? { opacity:1, x:0 } : {}}
         transition={{ duration:0.9, delay:0.15, ease:[0.16,1,0.3,1] }}>
         <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"24px" }}>
           <div style={{ width:"24px", height:"1px", background: T.gold }} />
@@ -815,22 +737,33 @@ function AppSection() {
           <StoreBtn store="apple" />
           <StoreBtn store="google" />
         </div>
-      </motion.div>
+      </Motion.div>
     </section>
   );
 }
 
 // ─── HOW IT WORKS ─────────────────────────────────────────────────────────────
-function HowItWorksStepCard({ step, index }) {
+const steps = [
+  { n:"01", title:"Create Your Account", desc:"Sign up in seconds with email or phone. Join thousands already building connections in the network." },
+  { n:"02", title:"Explore Businesses", desc:"Browse by category, location, or keyword. Restaurants, lawyers, doctors, mechanics — all Haitian-owned, all verified." },
+  { n:"03", title:"Connect & Support", desc:"Call, message, book, or visit directly from the app. Leave reviews and refer friends to strengthen the community." },
+  { n:"04", title:"List Your Business", desc:"Own a business? Create your profile in minutes and reach thousands already searching for your services." },
+];
+
+function HowItWorksStepCard({ step, index, columns, total, compact }) {
   const stepRef = useRef(null);
   const stepInView = useInView(stepRef, { once: true, margin:"-80px" });
+  const showRightBorder = columns === 4 ? index < total - 1 : columns === 2 ? index % 2 === 0 : false;
+  const showBottomBorder = columns === 2 ? index < total - 2 : false;
+  const showArrow = columns === 4 ? index < total - 1 : columns === 2 ? index % 2 === 0 : false;
 
   return (
-    <motion.div ref={stepRef}
+    <Motion.div key={step.n} ref={stepRef}
       initial={{ opacity:0, y:30 }} animate={stepInView ? { opacity:1, y:0 } : {}}
       transition={{ duration:0.7, delay: index * 0.13, ease:[0.16,1,0.3,1] }}
-      style={{ padding:"48px 36px",
-        borderRight: index < HOW_IT_WORKS_STEPS.length - 1 ? `1px solid ${T.mutedLow}` : "none",
+      style={{ padding: compact ? "38px 26px" : "48px 36px",
+        borderRight: showRightBorder ? `1px solid ${T.mutedLow}` : "none",
+        borderBottom: showBottomBorder ? `1px solid ${T.mutedLow}` : "none",
         position:"relative" }}>
       <span style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
         fontSize:"72px", lineHeight:1, color:"rgba(200,145,58,0.12)",
@@ -839,7 +772,7 @@ function HowItWorksStepCard({ step, index }) {
         color: T.cream, marginBottom:"14px" }}>{step.title}</div>
       <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px", lineHeight:1.75,
         color: T.muted }}>{step.desc}</p>
-      {index < HOW_IT_WORKS_STEPS.length - 1 && (
+      {showArrow && (
         <div style={{ position:"absolute", top:"50%", right:"-17px",
           width:"34px", height:"34px", borderRadius:"50%",
           background: T.black, border:`1px solid rgba(200,145,58,0.3)`,
@@ -849,16 +782,18 @@ function HowItWorksStepCard({ step, index }) {
           </svg>
         </div>
       )}
-    </motion.div>
+    </Motion.div>
   );
 }
 
-function HowItWorks() {
+function HowItWorks({ viewportWidth }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const columns = viewportWidth <= BP.md ? 1 : viewportWidth <= BP.lg ? 2 : 4;
+  const compact = viewportWidth <= BP.md;
   return (
-    <section style={{ padding:"140px 60px", background:"#0C0C0C" }} id="community">
-      <motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
+    <section style={{ padding:getSectionPadding(viewportWidth), background:"#0C0C0C" }} id="how-it-works">
+      <Motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
         transition={{ duration:0.8 }} style={{ marginBottom:"80px" }}>
         <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"24px" }}>
           <div style={{ width:"24px", height:"1px", background: T.gold }} />
@@ -868,11 +803,18 @@ function HowItWorks() {
         <h2 style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
           fontSize:"clamp(40px, 5.5vw, 76px)", lineHeight:1, letterSpacing:"-0.02em",
           color: T.cream }}>Simple. Powerful.<br /><em style={{ color: T.gold }}>Built for you.</em></h2>
-      </motion.div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)",
+      </Motion.div>
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${columns},1fr)`,
         border:`1px solid ${T.mutedLow}`, gap:"0" }}>
-        {HOW_IT_WORKS_STEPS.map((step, index) => (
-          <HowItWorksStepCard key={step.n} step={step} index={index} />
+        {steps.map((step, index) => (
+          <HowItWorksStepCard
+            key={step.n}
+            step={step}
+            index={index}
+            columns={columns}
+            total={steps.length}
+            compact={compact}
+          />
         ))}
       </div>
     </section>
@@ -880,34 +822,38 @@ function HowItWorks() {
 }
 
 // ─── CATEGORIES ───────────────────────────────────────────────────────────────
-function CategoryCard({ label, index, isActive, onSelect }) {
-  const cardRef = useRef(null);
-  const cardInView = useInView(cardRef, { once: true });
+const cats = ["Restaurants","Legal","Healthcare","Real Estate","Beauty","Auto",
+  "Technology","Creative","Finance","Education","Retail","Construction"];
 
+function CategoryCard({ category, index, isActive, onSelect, compact }) {
+  const cRef = useRef(null);
+  const cInView = useInView(cRef, { once: true });
   return (
-    <motion.div ref={cardRef}
-      initial={{ opacity:0, scale:0.92 }} animate={cardInView ? { opacity:1, scale:1 } : {}}
+    <Motion.div ref={cRef}
+      initial={{ opacity:0, scale:0.92 }} animate={cInView ? { opacity:1, scale:1 } : {}}
       transition={{ duration:0.5, delay: index * 0.05, ease:[0.16,1,0.3,1] }}
       onClick={() => onSelect(index)} data-hover
       style={{ border:`1px solid ${isActive ? T.gold : T.mutedLow}`,
         background: isActive ? T.goldDim : "transparent",
-        padding:"18px 16px", textAlign:"center", cursor:"pointer",
+        padding: compact ? "14px 12px" : "18px 16px", textAlign:"center", cursor:"pointer",
         fontFamily:"'Outfit',sans-serif", fontSize:"13px",
         color: isActive ? T.gold : T.muted,
         fontWeight: isActive ? 600 : 400,
         transition:"all 0.3s" }}>
-      {label}
-    </motion.div>
+      {category}
+    </Motion.div>
   );
 }
 
-function Categories() {
+function Categories({ viewportWidth }) {
   const [active, setActive] = useState(0);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const columns = viewportWidth <= BP.md ? 2 : viewportWidth <= BP.lg ? 3 : 6;
+  const compact = viewportWidth <= BP.md;
   return (
-    <section style={{ padding:"120px 60px", background: T.black }}>
-      <motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
+    <section style={{ padding:getSectionPadding(viewportWidth, { desktop:"120px 60px", xl:"120px 48px", tablet:"100px 36px", mobile:"90px 20px" }), background: T.black }}>
+      <Motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
         transition={{ duration:0.8 }} style={{ marginBottom:"56px" }}>
         <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"24px" }}>
           <div style={{ width:"24px", height:"1px", background: T.gold }} />
@@ -917,15 +863,16 @@ function Categories() {
         <h2 style={{ fontFamily:"'Playfair Display',serif", fontWeight:900,
           fontSize:"clamp(38px, 5vw, 68px)", lineHeight:1.02, letterSpacing:"-0.02em",
           color: T.cream }}>Every service,<br /><em style={{ color: T.gold }}>every business</em></h2>
-      </motion.div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:"8px" }}>
-        {CATEGORY_ITEMS.map((label, index) => (
+      </Motion.div>
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${columns},1fr)`, gap:"8px" }}>
+        {cats.map((category, index) => (
           <CategoryCard
-            key={label}
-            label={label}
+            key={category}
+            category={category}
             index={index}
             isActive={active === index}
             onSelect={setActive}
+            compact={compact}
           />
         ))}
       </div>
@@ -943,15 +890,17 @@ const testimonials = [
   { q:"Building my brand in a new market felt impossible until KONEKT. Now I have clients who genuinely believe in what we do. This platform gives Haitian business a real voice.", name:"Nadia Thermidor", role:"Fashion Designer · Houston, TX", initials:"NT" },
 ];
 
-function Testimonials() {
+function Testimonials({ viewportWidth }) {
   const doubled = [...testimonials, ...testimonials];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const sectionPadding = getSectionPadding(viewportWidth);
+  const cardWidth = viewportWidth <= BP.sm ? "280px" : viewportWidth <= BP.md ? "300px" : "340px";
   return (
-    <section style={{ padding:"140px 0 140px", background:"#0C0C0C", overflow:"hidden" }}>
-      <motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
+    <section style={{ padding: `${sectionPadding.split(" ")[0]} 0`, background:"#0C0C0C", overflow:"hidden" }} id="community">
+      <Motion.div ref={ref} initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
         transition={{ duration:0.8 }}
-        style={{ padding:"0 60px", marginBottom:"60px", display:"flex",
+        style={{ padding:`0 ${sectionPadding.split(" ")[1]}`, marginBottom:"60px", display:"flex",
           justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
           <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"24px" }}>
@@ -963,12 +912,12 @@ function Testimonials() {
             fontSize:"clamp(38px, 5vw, 68px)", lineHeight:1.02, letterSpacing:"-0.02em",
             color: T.cream }}>They trust<br /><em style={{ color: T.gold }}>KONEKT</em></h2>
         </div>
-      </motion.div>
+      </Motion.div>
 
       <div style={{ display:"flex", gap:"20px", animation:"slideT 45s linear infinite", width:"max-content" }}>
         <style>{`@keyframes slideT { from{transform:translateX(0)} to{transform:translateX(-50%)} }`}</style>
         {doubled.map((t, i) => (
-          <div key={i} style={{ width:"340px", flexShrink:0, padding:"36px 32px",
+          <div key={i} style={{ width:cardWidth, flexShrink:0, padding:"36px 32px",
             background:"rgba(242,237,228,0.03)", border:`1px solid ${T.mutedLow}` }}>
             {/* Stars */}
             <div style={{ display:"flex", gap:"4px", marginBottom:"20px" }}>
@@ -1003,13 +952,13 @@ function Testimonials() {
 }
 
 // ─── CTA SECTION ─────────────────────────────────────────────────────────────
-function CTA() {
+function CTA({ viewportWidth }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   return (
     <section style={{ minHeight:"88vh", display:"flex", flexDirection:"column",
       alignItems:"center", justifyContent:"center", textAlign:"center",
-      padding:"140px 60px", position:"relative", overflow:"hidden" }} id="download">
+      padding:getSectionPadding(viewportWidth), position:"relative", overflow:"hidden" }} id="download">
       {/* BG */}
       <div style={{ position:"absolute", inset:0,
         background:`radial-gradient(ellipse 80% 60% at 50% 100%, rgba(15,35,71,0.4) 0%, transparent 70%)` }} />
@@ -1023,7 +972,7 @@ function CTA() {
         background:`radial-gradient(circle, rgba(184,49,31,0.3) 0%, transparent 70%)`,
         borderRadius:"50%", filter:"blur(60px)" }} />
 
-      <motion.div ref={ref} initial={{ opacity:0, y:40 }} animate={inView ? { opacity:1, y:0 } : {}}
+      <Motion.div ref={ref} initial={{ opacity:0, y:40 }} animate={inView ? { opacity:1, y:0 } : {}}
         transition={{ duration:0.9, ease:[0.16,1,0.3,1] }}
         style={{ position:"relative", zIndex:2 }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"12px", marginBottom:"36px" }}>
@@ -1061,22 +1010,50 @@ function CTA() {
             </div>
           ))}
         </div>
-      </motion.div>
+      </Motion.div>
     </section>
   );
 }
 
 // ─── FOOTER ───────────────────────────────────────────────────────────────────
-function Footer() {
-  const cols = [
-    { h:"Product", links:["Features","For Business Owners","Pricing","App Download"] },
-    { h:"Company", links:["About Us","Mission","Press","Careers"] },
-    { h:"Support", links:["Help Center","Contact","Privacy Policy","Terms of Service"] },
-  ];
+const FOOTER_COLUMNS = [
+  {
+    h:"Product",
+    links:[
+      { label:"Discover Businesses", href:"/discover-businesses" },
+      { label:"List Your Business", href:"/list-your-business" },
+      { label:"Community Reviews", href:"/community-reviews" },
+      { label:"Download the App", href:"/download-the-app" },
+    ],
+  },
+  {
+    h:"Company",
+    links:[
+      { label:"Our Story", href:"/our-story" },
+      { label:"Mission & Vision", href:"/mission-vision" },
+      { label:"Community Partners", href:"/community-partners" },
+      { label:"Careers", href:"/careers" },
+    ],
+  },
+  {
+    h:"Support",
+    links:[
+      { label:"Help Center", href:"/help-center" },
+      { label:"Contact Support", href:"/contact-support" },
+      { label:"Privacy Policy", href:"/privacy-policy" },
+      { label:"Terms of Service", href:"/terms-of-service" },
+    ],
+  },
+];
+
+function Footer({ viewportWidth }) {
+  const cols = FOOTER_COLUMNS;
+  const columns = viewportWidth <= BP.md ? "1fr" : viewportWidth <= BP.lg ? "repeat(2,1fr)" : "2fr 1fr 1fr 1fr";
+  const sectionPadding = viewportWidth <= BP.md ? "70px 20px 32px" : viewportWidth <= BP.lg ? "70px 36px 36px" : "80px 60px 40px";
   return (
-    <footer style={{ background:"#000", padding:"80px 60px 40px",
+    <footer style={{ background:"#000", padding:sectionPadding,
       borderTop:`1px solid ${T.mutedLow}` }}>
-      <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr 1fr", gap:"60px", marginBottom:"60px" }}>
+      <div style={{ display:"grid", gridTemplateColumns:columns, gap:viewportWidth <= BP.lg ? "28px" : "60px", marginBottom:"60px" }}>
         <div>
           <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:900, fontSize:"24px",
             letterSpacing:"0.06em", color: T.cream, marginBottom:"18px" }}>
@@ -1084,8 +1061,8 @@ function Footer() {
           </div>
           <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px", lineHeight:1.85,
             color: T.muted, maxWidth:"320px", fontWeight:300 }}>
-            The premier business discovery platform for the Haitian community — in the United States,
-            Canada, and around the world.
+            KONEKT helps the Haitian diaspora discover, support, and grow businesses worldwide.
+            One trusted platform for community-powered commerce.
           </p>
         </div>
         {cols.map((col, i) => (
@@ -1095,10 +1072,10 @@ function Footer() {
               marginBottom:"20px" }}>{col.h}</div>
             <div style={{ display:"flex", flexDirection:"column", gap:"10px" }}>
               {col.links.map(l => (
-                <a key={l} href="#" style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px",
+                <a key={l.label} href={l.href} style={{ fontFamily:"'Outfit',sans-serif", fontSize:"14px",
                   color: T.muted, textDecoration:"none", cursor:"pointer", transition:"color 0.3s" }}
                   onMouseEnter={e => e.target.style.color = T.gold}
-                  onMouseLeave={e => e.target.style.color = T.muted}>{l}</a>
+                  onMouseLeave={e => e.target.style.color = T.muted}>{l.label}</a>
               ))}
             </div>
           </div>
@@ -1107,10 +1084,10 @@ function Footer() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
         paddingTop:"32px", borderTop:`1px solid ${T.mutedLow}`, flexWrap:"wrap", gap:"16px" }}>
         <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"13px",
-          color:"rgba(242,237,228,0.25)" }}>© 2025 KONEKT. All rights reserved.</p>
+          color:"rgba(242,237,228,0.25)" }}>© 2026 KONEKT. Built for the Haitian diaspora.</p>
         <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
           <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"13px",
-            color:"rgba(242,237,228,0.25)" }}>Made with love for Haiti</span>
+            color:"rgba(242,237,228,0.25)" }}>Rooted in Haiti. Connected worldwide.</span>
           <div style={{ width:"24px", height:"15px", display:"flex", flexDirection:"column",
             overflow:"hidden", borderRadius:"2px" }}>
             <div style={{ background:"#00209F", flex:1 }} />
@@ -1124,23 +1101,59 @@ function Footer() {
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function KonektLanding() {
+  const viewportWidth = useViewportWidth();
+  const pathname = typeof window !== "undefined"
+    ? (window.location.pathname.replace(/\/+$/, "") || "/")
+    : "/";
+  const isLanding = pathname === "/" || pathname === "/index.html";
+  const RoutePage = FOOTER_ROUTE_COMPONENTS[pathname];
+
+  if (!isLanding && RoutePage) {
+    return (
+      <>
+        <style>{FONT_STYLE}</style>
+        <Noise />
+        <ProgressBar />
+        <RoutePage
+          viewportWidth={viewportWidth}
+          theme={T}
+          breakpoints={BP}
+          getSectionPadding={getSectionPadding}
+        />
+        <Footer viewportWidth={viewportWidth} />
+      </>
+    );
+  }
+
+  if (!isLanding && !RoutePage) {
+    return (
+      <>
+        <style>{FONT_STYLE}</style>
+        <Noise />
+        <ProgressBar />
+        <NotFoundPage theme={T} />
+        <Footer viewportWidth={viewportWidth} />
+      </>
+    );
+  }
+
   return (
     <>
       <style>{FONT_STYLE}</style>
       <Noise />
       <ProgressBar />
-      <Nav />
-      <Hero />
+      <Nav viewportWidth={viewportWidth} />
+      <Hero viewportWidth={viewportWidth} />
       <Marquee />
-      <Stats />
-      <ScrollStory />
-      <Features />
-      <AppSection />
-      <HowItWorks />
-      <Categories />
-      <Testimonials />
-      <CTA />
-      <Footer />
+      <Stats viewportWidth={viewportWidth} />
+      <ScrollStory viewportWidth={viewportWidth} />
+      <Features viewportWidth={viewportWidth} />
+      <AppSection viewportWidth={viewportWidth} />
+      <HowItWorks viewportWidth={viewportWidth} />
+      <Categories viewportWidth={viewportWidth} />
+      <Testimonials viewportWidth={viewportWidth} />
+      <CTA viewportWidth={viewportWidth} />
+      <Footer viewportWidth={viewportWidth} />
     </>
   );
 }

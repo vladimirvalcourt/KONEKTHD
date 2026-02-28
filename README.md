@@ -66,3 +66,4 @@ Open: `http://localhost:5173/`
 
 - Architecture: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
 - Changelog: [`docs/CHANGELOG.md`](./docs/CHANGELOG.md)
+- PRD: [`docs/PRD.md`](./docs/PRD.md)
