@@ -22,7 +22,9 @@ const FOOTER_ROUTE_COMPONENTS = {
   "/careers": CareersPage,
   "/help-center": HelpCenterPage,
   "/contact-support": ContactSupportPage,
+  "/support": ContactSupportPage,
   "/privacy-policy": PrivacyPolicyPage,
+  "/privacy": PrivacyPolicyPage,
   "/terms-of-service": TermsOfServicePage,
 };
 
