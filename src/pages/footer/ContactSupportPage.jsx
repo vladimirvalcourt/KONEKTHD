@@ -2,12 +2,29 @@ import InfoPageLayout from "./InfoPageLayout";
 
 const page = {
   group: "Support",
-  title: "Contact Support",
-  intro: "Need help from the KONEKT team? We’re here to assist.",
+  title: "Support & Community Safety",
+  intro: "Need Help? Email us at support@konektapp.com",
   sections: [
-    { h: "Support Email", p: "Reach us directly at support@konekt.app for account and technical issues." },
-    { h: "Response Window", p: "Most requests receive a response within one business day." },
-    { h: "Best Results", p: "Include screenshots, device details, and steps so we can resolve your issue faster." },
+    {
+      h: "Community Safety (Required by Apple)",
+      p: "At Konekt, we prioritize a safe community for the Haitian diaspora.",
+    },
+    {
+      h: "How to Report",
+      p: "You can report any business or review directly in the app by clicking the \"Report\" button next to the content.",
+    },
+    {
+      h: "Review Process",
+      p: "Every report is reviewed by a human moderator within 24 hours.",
+    },
+    {
+      h: "Action Taken",
+      p: "If content is found to be objectionable, it will be removed immediately. If a user is found to be abusive, their account will be blocked.",
+    },
+    {
+      h: "Zero Tolerance",
+      p: "We have a zero-tolerance policy against hate speech, harassment, or fraudulent listings.",
+    },
   ],
 };
 
