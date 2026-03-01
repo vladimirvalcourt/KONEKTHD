@@ -292,17 +292,6 @@ function Hero({ viewportWidth }) {
         </Motion.div>
       </Motion.div>
 
-      {/* Scroll indicator */}
-      <Motion.div initial={{ opacity:0 }} animate={{ opacity: viewportWidth <= BP.sm ? 0 : 1 }} transition={{ delay:0.8 }}
-        style={{ position:"absolute", bottom:"40px", right:"60px", zIndex:3,
-          display: viewportWidth <= BP.sm ? "none" : "flex", flexDirection:"column", alignItems:"center", gap:"10px" }}>
-        <div style={{ width:"1px", height:"72px", background:`linear-gradient(${T.gold}, transparent)`,
-          animation:"scrollLine 2.2s ease-in-out infinite" }} />
-        <style>{`@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }`}</style>
-        <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:"9px", letterSpacing:"0.22em",
-          textTransform:"uppercase", color: T.muted, writingMode:"vertical-rl" }}>Scroll</span>
-      </Motion.div>
-
       {/* Corner stat */}
       <Motion.div initial={{ opacity:0, x:20 }} animate={{ opacity: viewportWidth <= BP.sm ? 0 : 1, x:0 }}
         transition={{ delay:0.72 }}
