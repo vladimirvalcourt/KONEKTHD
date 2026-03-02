@@ -1053,6 +1053,7 @@ const FOOTER_COLUMNS = [
       { label:"Contact Support", href:"/contact-support" },
       { label:"Privacy Policy", href:"/privacy-policy" },
       { label:"Terms of Service", href:"/terms" },
+      { label:"Age Rating", href:"/age-rating" },
     ],
   },
 ];

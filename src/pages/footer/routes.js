@@ -10,6 +10,7 @@ import HelpCenterPage from "./HelpCenterPage";
 import ContactSupportPage from "./ContactSupportPage";
 import PrivacyPolicyPage from "./PrivacyPolicyPage";
 import TermsOfServicePage from "./TermsOfServicePage";
+import AgeRatingPage from "./AgeRatingPage";
 
 const FOOTER_ROUTE_COMPONENTS = {
   "/discover-businesses": DiscoverBusinessesPage,
@@ -27,6 +28,8 @@ const FOOTER_ROUTE_COMPONENTS = {
   "/privacy": PrivacyPolicyPage,
   "/terms-of-service": TermsOfServicePage,
   "/terms": TermsOfServicePage,
+  "/age-rating": AgeRatingPage,
+  "/age-rating-questionnaire": AgeRatingPage,
 };
 
 export default FOOTER_ROUTE_COMPONENTS;
