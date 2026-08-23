@@ -1,0 +1,16 @@
+export const SITE = {
+  name: "KONEKT",
+  supportEmail: import.meta.env.VITE_SUPPORT_EMAIL?.trim() || "support@konektapp.com",
+  appStoreURL: import.meta.env.VITE_APP_STORE_URL?.trim() || "",
+  googlePlayURL: import.meta.env.VITE_GOOGLE_PLAY_URL?.trim() || "",
+  canonicalURL: import.meta.env.VITE_SITE_URL?.trim() || "https://konektapp.com",
+}
+
+export function platformLink(platform) {
+  const configuredURL = platform === "ios" ? SITE.appStoreURL : SITE.googlePlayURL
+  return configuredURL || "/download-the-app"
+}
+
+export function supportMailto(subject = "KONEKT support") {
+  return `mailto:${SITE.supportEmail}?subject=${encodeURIComponent(subject)}`
+}

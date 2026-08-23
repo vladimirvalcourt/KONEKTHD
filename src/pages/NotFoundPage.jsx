@@ -1,20 +1,10 @@
-export default function NotFoundPage({ theme }) {
+export default function NotFoundPage({ language }) {
   return (
-    <main style={{ minHeight:"100vh", background:theme.black, display:"grid", placeItems:"center", padding:"40px 20px" }}>
-      <div style={{ textAlign:"center", maxWidth:"620px" }}>
-        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:"11px", letterSpacing:"0.2em", textTransform:"uppercase", color:theme.gold, marginBottom:"16px" }}>
-          404
-        </div>
-        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(42px,7vw,72px)", lineHeight:0.96, color:theme.cream, marginBottom:"16px" }}>
-          Page Not Found
-        </h1>
-        <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:"16px", lineHeight:1.8, color:theme.muted, marginBottom:"28px" }}>
-          The page you requested is not available right now.
-        </p>
-        <a href="/" style={{ display:"inline-block", background:theme.gold, color:theme.black, textDecoration:"none", fontFamily:"'Outfit',sans-serif", fontWeight:600, fontSize:"12px", letterSpacing:"0.12em", textTransform:"uppercase", padding:"12px 24px", cursor:"pointer" }}>
-          Return Home
-        </a>
-      </div>
+    <main id="main-content" className="not-found shell">
+      <p className="eyebrow">404</p>
+      <h1>{language === "ht" ? "Nou pa jwenn paj sa a." : "We couldn't find that page."}</h1>
+      <p>{language === "ht" ? "Lyen an ka chanje oswa paj la ka pa egziste ankò." : "The link may have changed or the page may no longer exist."}</p>
+      <a className="button button--navy" href="/">{language === "ht" ? "Tounen nan akèy" : "Return home"} <img className="button__icon" src="/icons/caret-right.svg" alt="" /></a>
     </main>
-  );
+  )
 }

@@ -1,71 +1,46 @@
-# Architecture Overview
+# Website architecture
 
-## App Composition
+## Role
 
-All UI is composed in `src/App.jsx` as a section-based, animation-first landing page.
+KONEKTHD is a static React/Vite marketing surface. It communicates the KONEKT product and hosts public support information. It does not query Supabase and does not administer provider submissions.
 
-Top-level render order:
+```text
+Browser
+  -> App route composition
+      -> Landing sections
+      -> Bilingual information pages
+  -> Static assets and reviewed Phosphor icons
+  -> Optional configured store/support destinations
+```
 
-1. `Noise`
-2. `ProgressBar`
-3. `Nav`
-4. `Hero`
-5. `Marquee`
-6. `Stats`
-7. `ScrollStory`
-8. `Features`
-9. `AppSection`
-10. `HowItWorks`
-11. `Categories`
-12. `Testimonials`
-13. `CTA`
-14. `Footer`
+## State
 
-## Design System Strategy
+- The selected language is the only persisted website preference and is stored in local browser storage.
+- Product-preview search and category selection are in-memory demonstration state.
+- Preview results are explicitly illustrative and never presented as production provider records.
+- Store URLs come from Vite environment variables and fall back to the platform-status route.
 
-- Local design tokens are centralized in constant `T` (`black`, `cream`, `gold`, etc.).
-- Typography and base document styles are injected through `FONT_STYLE`.
-- Visual consistency is preserved via recurring spacing/opacity/border patterns.
+## Design system
 
-## Motion System
+The stylesheet uses primitive color values, semantic purpose tokens, and component-level selectors. The visual language is warm editorial paper, Haitian navy, restrained red, and gold. The site uses no remote fonts, third-party tracking scripts, or decorative icon library at runtime.
 
-- Framer Motion is used for:
-  - entrance reveals
-  - scroll-linked transforms (`useScroll`, `useTransform`, `useSpring`)
-  - deck/card transitions (`AnimatePresence`)
-- Reduced-motion handling is implemented where interactions are most dynamic (feature deck).
+The reviewed icon assets are from the same local Phosphor family used by KONEKT's iPhone experience. Icons support navigation or meaning; they are not used as decorative feature filler.
 
-## Feature Deck (Current Model)
+## Routing
 
-The features section uses a unified deck interaction:
+Vercel rewrites public paths to the Vite entry point. `App.jsx` resolves known information routes and shows an accessible 404 for unknown paths.
 
-- `DeckActiveCard`:
-  - clickable front card
-  - supports keyboard advance (`Enter`, `Space`)
-  - exits and enters with stack-style rotate/slide motion
-- `DeckBackCard`:
-  - non-interactive stacked preview layers (`aria-hidden`)
-  - depth achieved through offset/scale/opacity
-- `activeIndex` controls the active feature and wraps cyclically.
+## Security and privacy
 
-## Phone Mockup Interaction
+- No backend secret is shipped.
+- No analytics pipeline or newsletter collection is enabled.
+- Content Security Policy, frame denial, referrer policy, MIME sniffing protection, and a restrictive permissions policy are configured at the host.
+- Provider authentication, publication, verification, and evidence access remain outside this repository.
 
-`PhoneMockup` supports an `interactive` prop:
+## Quality gates
 
-- Front phone (`interactive`) listens for hover on desktop-capable pointers.
-- Internal content track animates vertically inside a fixed viewport.
-- Scroll range is measured using `ResizeObserver`.
-- Touch/mobile defaults to static behavior.
-
-## Accessibility Notes
-
-- Active feature card is a semantic `button`.
-- Keyboard and reduced-motion behavior is integrated in feature deck interaction.
-- Native cursor behavior is restored globally.
-
-## Build and Tooling
-
-- Build tool: Vite
-- Linting: ESLint (flat config)
-- Output artifacts: `dist/`
-
+- ESLint validates React and JavaScript.
+- The content audit blocks previously identified unsupported claims and incorrect Clerk/ticketing copy.
+- Vite production build proves bundle integrity.
+- GitHub Actions runs the same `npm run check` gate on pull requests and `main` pushes.
+- Browser verification covers English/Kreyòl switching, mobile navigation, interactive filtering, key public routes, 404 behavior, console errors, and mobile horizontal overflow.
