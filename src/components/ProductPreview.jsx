@@ -1,15 +1,27 @@
 import { useEffect, useMemo, useState } from "react"
-import { loadPublishedProviders, providerMatches, safeExternalUrl, splitProvidersForState, stateFromCoordinates, stateFromZip } from "../providerDiscovery"
+import { availableProviderCategories, directionsUrl, isLikelyBookingUrl, loadPublishedProviders, providerCategory, providerMatches, safeExternalUrl, splitProvidersForState, stateFromCoordinates, stateFromZip } from "../providerDiscovery"
 
 const LOCATION_KEY = "konekt-search-state-v1"
 const LOCATION_EVENT = "konekt-location-change"
-const categoryOptions = [
-  { id: "all", en: "All services", ht: "Tout sèvis" },
-  { id: "healthcare", en: "Healthcare", ht: "Swen sante" },
-  { id: "legal", en: "Legal", ht: "Lalwa" },
-  { id: "financial", en: "Financial", ht: "Finans" },
-  { id: "community", en: "Community", ht: "Kominote" },
-]
+const categoryLabels = {
+  all: { en: "All services", ht: "Tout sèvis" },
+  healthcare: { en: "Healthcare", ht: "Swen sante" },
+  legal: { en: "Legal", ht: "Lalwa" },
+  financial: { en: "Tax & financial", ht: "Taks ak finans" },
+  translation: { en: "Translation", ht: "Tradiksyon" },
+  community: { en: "Community", ht: "Kominote" },
+}
+
+const serviceLabelsHT = {
+  "family medicine": "Medsin fanmi",
+  pediatrics: "Pedyatri",
+  interpretation: "Entèpretasyon",
+  translation: "Tradiksyon",
+  "tax preparation": "Preparasyon taks",
+  bookkeeping: "Kontablite",
+  "legal services": "Sèvis legal",
+  "immigration law": "Lalwa imigrasyon",
+}
 
 function getSavedLocation() {
   try {
@@ -39,24 +51,78 @@ function languageAccess(provider, language) {
   return language === "ht" ? "Mande sou sèvis an Kreyòl" : "Ask about Haitian Creole support"
 }
 
+function verifiedLanguageAccess(provider, language) {
+  const status = provider.language_verification_status
+  if (!["VERIFIED_PROVIDER_SPEAKS", "VERIFIED_STAFF_SPEAKS", "INTERPRETER_CONFIRMED"].includes(status)) return null
+  return language === "ht" ? "KONEKT tcheke èd an Kreyòl la" : "Haitian Creole access verified"
+}
+
+function localizedLocation(value, language) {
+  if (!value || language !== "ht") return value
+  return value
+    .replace(/^Telehealth service in /i, "Sèvis telesante nan ")
+    .replace(/^Nationwide remote and scheduled on-site service$/i, "Sèvis adistans nan tout peyi a ak sèvis sou plas sou randevou")
+    .replace(/^Nationwide remote and on-site service$/i, "Sèvis adistans nan tout peyi a ak sèvis sou plas")
+    .replace(/^Nationwide remote service$/i, "Sèvis adistans nan tout peyi a")
+}
+
+function providerDetails(provider, language) {
+  const isHT = language === "ht"
+  const items = []
+  if (provider.hours_status_text) items.push({ label: isHT ? "Lè" : "Hours", value: provider.hours_status_text })
+  if (provider.service_area) items.push({ label: isHT ? "Zòn sèvis" : "Service area", value: localizedLocation(provider.service_area, language) })
+  if (provider.accepting_new_patients) items.push({ label: isHT ? "Disponiblite" : "Availability", value: isHT ? "Aksepte nouvo kliyan oswa pasyan" : "Accepting new clients or patients" })
+  if (provider.telehealth_available) items.push({ label: isHT ? "Opsyon" : "Options", value: isHT ? "Sèvis adistans disponib" : "Remote service available" })
+  const insurance = Array.isArray(provider.insurance_accepted) ? provider.insurance_accepted.filter(Boolean) : []
+  if (provider.medicaid_accepted) insurance.unshift("Medicaid")
+  if (provider.medicare_accepted) insurance.unshift("Medicare")
+  if (insurance.length) items.push({ label: isHT ? "Asirans" : "Insurance", value: [...new Set(insurance)].join(", ") })
+  return items
+}
+
 function ProviderCard({ provider, language }) {
+  const isHT = language === "ht"
   const name = provider.business_name || provider.name
-  const specialty = language === "ht" ? (provider.specialty_ht || provider.specialty) : provider.specialty
+  const category = providerCategory(provider)
+  const specialty = isHT ? (provider.specialty_ht || categoryLabels[category]?.ht || provider.category) : provider.specialty
+  const description = isHT ? provider.description_ht : provider.description
   const website = safeExternalUrl(provider.website)
   const appointment = safeExternalUrl(provider.appointment_url)
+  const booking = appointment && appointment !== website && isLikelyBookingUrl(appointment) ? appointment : null
+  const primaryWebsite = website || (!booking ? appointment : null)
+  const directions = directionsUrl(provider)
   const phone = provider.phone?.replace(/[^\d+]/g, "")
+  const services = Array.isArray(provider.services) ? provider.services.filter(Boolean).map((service) => isHT ? (serviceLabelsHT[service.toLowerCase()] || service) : service) : []
+  const details = providerDetails(provider, language)
+  const verifiedLanguage = verifiedLanguageAccess(provider, language)
   return (
     <article className="preview-result">
-      <div className="preview-result__copy">
+      <div className="preview-result__summary">
+        <div className="preview-result__copy">
         <h3>{name}</h3>
-        <p>{[specialty || provider.category, provider.address].filter(Boolean).join(" · ")}</p>
+        <p>{[specialty || provider.category, localizedLocation(provider.address, language)].filter(Boolean).join(" · ")}</p>
         <span className="preview-language-badge">{languageAccess(provider, language)}</span>
+          {verifiedLanguage && <span className="preview-verified-badge">{verifiedLanguage}</span>}
+        </div>
+        <div className="preview-result__actions">
+          {phone && <a href={`tel:${phone}`}>{isHT ? "Rele" : "Call"}</a>}
+          {booking && <a href={booking} target="_blank" rel="noreferrer">{isHT ? "Pran randevou" : "Book"}</a>}
+          {primaryWebsite && <a href={primaryWebsite} target="_blank" rel="noreferrer">{isHT ? "Sit entènèt" : "Website"}</a>}
+        </div>
       </div>
-      <div className="preview-result__actions">
-        {phone && <a href={`tel:${phone}`}>{language === "ht" ? "Rele" : "Call"}</a>}
-        {appointment && <a href={appointment} target="_blank" rel="noreferrer">{language === "ht" ? "Pran randevou" : "Book"}</a>}
-        {!appointment && website && <a href={website} target="_blank" rel="noreferrer">{language === "ht" ? "Sit entènèt" : "Website"}</a>}
-      </div>
+      <details className="preview-result__details">
+        <summary>{isHT ? "Gade detay" : "View details"}</summary>
+        <div className="preview-result__details-body">
+          {description && <p>{description}</p>}
+          {!!services.length && <div><strong>{isHT ? "Sèvis" : "Services"}</strong><p>{services.join(", ")}</p></div>}
+          {details.map((item) => <div key={item.label}><strong>{item.label}</strong><p>{item.value}</p></div>)}
+          <div className="preview-result__secondary-actions">
+            {directions && <a href={directions} target="_blank" rel="noreferrer">{isHT ? "Jwenn direksyon" : "Directions"}</a>}
+            {booking && primaryWebsite && <a href={primaryWebsite} target="_blank" rel="noreferrer">{isHT ? "Sit entènèt" : "Website"}</a>}
+          </div>
+          {!description && !services.length && !details.length && <p>{isHT ? "Kontakte founisè a pou konfime detay sèvis la." : "Contact the provider to confirm service details."}</p>}
+        </div>
+      </details>
     </article>
   )
 }
@@ -73,7 +139,7 @@ export default function ProductPreview({ language }) {
 
   useEffect(() => {
     let active = true
-    loadPublishedProviders().then((data) => {
+    Promise.resolve().then(loadPublishedProviders).then((data) => {
       if (active) { setProviders(data); setStatus("ready") }
     }).catch((requestError) => {
       if (active) { setError(requestError); setStatus("error") }
@@ -124,22 +190,24 @@ export default function ProductPreview({ language }) {
     return { local: split.local.filter((provider) => providerMatches(provider, filters)), nationwide: split.nationwide.filter((provider) => providerMatches(provider, filters)) }
   }, [category, location, providers, query])
 
+  const categoryOptions = useMemo(() => ["all", ...availableProviderCategories(providers)].map((id) => ({ id, ...categoryLabels[id] })), [providers])
+
   const stateName = location?.stateCode || ""
   const isHT = language === "ht"
   return (
-    <div className="product-preview" aria-label={isHT ? "Rechèch founisè KONEKT" : "KONEKT provider search"}>
+    <div className="product-preview" id="provider-search" aria-label={isHT ? "Rechèch founisè KONEKT" : "KONEKT provider search"}>
       <div className="product-preview__topline"><span>{isHT ? "Anyè KONEKT an dirèk" : "Live KONEKT directory"}</span><span>{location ? `${location.place ? `${location.place}, ` : ""}${location.stateCode}` : (isHT ? "Chwazi kote ou" : "Choose your location")}</span></div>
       <div className="product-preview__brand"><img src="/konekt-favicon.png" alt="" /> KONEKT</div>
       {!location ? (
         <div className="preview-location">
-          <h3>{isHT ? "Jwenn founisè nan zòn ou" : "Find providers in your area"}</h3>
+          <h3>{isHT ? "Jwenn founisè nan eta ou" : "Find providers in your state"}</h3>
           <p>{isHT ? "Antre kòd postal ou oswa chwazi itilize kote ou ye a. Ou pa bezwen yon kont." : "Enter your ZIP code or choose to use your location. No account is required."}</p>
           <form onSubmit={submitZip} className="preview-location__form">
             <label><span className="sr-only">{isHT ? "Kòd postal" : "ZIP code"}</span><input inputMode="numeric" autoComplete="postal-code" maxLength="5" value={zip} onChange={(event) => setZip(event.target.value.replace(/\D/g, ""))} placeholder={isHT ? "Kòd postal" : "ZIP code"} /></label>
             <button type="submit" disabled={locationStatus === "loading"}>{isHT ? "Chèche" : "Search"}</button>
           </form>
           <button className="preview-location__gps" type="button" onClick={useMyLocation} disabled={locationStatus === "loading"}><img src="/icons/map-pin.svg" alt="" /> {isHT ? "Itilize kote mwen ye a" : "Use my location"}</button>
-          {locationStatus === "loading" && <p className="preview-status">{isHT ? "N ap jwenn zòn ou..." : "Finding your area..."}</p>}
+          {locationStatus === "loading" && <p className="preview-status">{isHT ? "N ap jwenn eta ou..." : "Finding your state..."}</p>}
           {error && <p className="preview-error" role="alert">{getErrorCopy(error, language)}</p>}
         </div>
       ) : (
@@ -150,7 +218,7 @@ export default function ProductPreview({ language }) {
           <div className="preview-results" aria-live="polite">
             {status === "loading" && <p className="preview-empty">{isHT ? "N ap chaje founisè yo..." : "Loading providers..."}</p>}
             {status === "error" && <p className="preview-error" role="alert">{getErrorCopy(error, language)}</p>}
-            {status === "ready" && <><div className="preview-results__heading"><strong>{isHT ? "Nan zòn ou" : "In your area"}</strong><span>{results.local.length}</span></div>{results.local.length ? results.local.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />) : <p className="preview-empty">{isHT ? "Nou poko gen yon founisè ki mache ak rechèch sa a nan eta ou. Eseye yon lòt sèvis." : "We do not have a matching provider in your state yet. Try another service."}</p>}{!!results.nationwide.length && <section className="preview-nationwide" aria-label={isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}><div className="preview-results__heading"><strong>{isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}</strong><span>{results.nationwide.length}</span></div>{results.nationwide.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />)}</section>}</>}
+            {status === "ready" && <><div className="preview-results__heading"><strong>{isHT ? "Nan eta ou" : "In your state"}</strong><span>{results.local.length}</span></div>{results.local.length ? results.local.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />) : <p className="preview-empty">{isHT ? "Nou poko gen yon founisè ki mache ak rechèch sa a nan eta ou. Eseye yon lòt sèvis." : "We do not have a matching provider in your state yet. Try another service."}</p>}{!!results.nationwide.length && <section className="preview-nationwide" aria-label={isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}><div className="preview-results__heading"><strong>{isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}</strong><span>{results.nationwide.length}</span></div>{results.nationwide.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />)}</section>}</>}
           </div>
           <p className="preview-disclaimer">{isHT ? "Konfime detay, disponiblite, ak sèvis an Kreyòl dirèkteman ak founisè a." : "Confirm details, availability, and Haitian Creole support directly with the provider."}</p>
         </>

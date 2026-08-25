@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://konektapp.com/sitemap.xml
+Sitemap: https://www.konekt.directory/sitemap.xml

@@ -194,6 +194,7 @@ p {
 
 .brand-mark {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   gap: 13px;
   color: var(--white);
@@ -289,7 +290,7 @@ p {
 }
 
 .language-switch button {
-  min-height: 36px;
+  min-height: 44px;
   padding: 7px 13px;
   border: 0;
   border-radius: 999px;
@@ -639,7 +640,7 @@ p {
 }
 
 .preview-location-summary button {
-  min-height: 36px;
+  min-height: 44px;
   padding: 0 4px;
   border: 0;
   background: transparent;
@@ -667,13 +668,13 @@ p {
 .preview-categories button {
   position: relative;
   flex: 0 0 auto;
-  min-height: 39px;
+  min-height: 44px;
   padding: 4px 0 11px;
   border: 0;
   background: transparent;
   color: var(--ink-500);
   cursor: pointer;
-  font-size: 0.67rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
@@ -701,7 +702,7 @@ p {
 .preview-results__heading {
   padding: 10px 0 5px;
   color: var(--ink-500);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -717,13 +718,16 @@ p {
 }
 
 .preview-result {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(18, 32, 51, 0.11);
+}
+
+.preview-result__summary {
   display: flex;
   min-height: 66px;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(18, 32, 51, 0.11);
 }
 
 .preview-result h3 {
@@ -737,7 +741,8 @@ p {
 .preview-result p {
   margin: 0;
   color: var(--ink-500);
-  font-size: 0.67rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 
 .preview-result__copy {
@@ -751,10 +756,22 @@ p {
   border: 1px solid rgba(167, 45, 38, 0.22);
   border-radius: 999px;
   color: var(--red-700);
-  font-size: 0.61rem;
+  font-size: 0.7rem;
   font-weight: 750;
   line-height: 1.25;
   text-align: center;
+}
+
+.preview-verified-badge {
+  display: inline-block;
+  margin: 7px 0 0 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(18, 53, 97, 0.09);
+  color: var(--navy-800);
+  font-size: 0.7rem;
+  font-weight: 750;
+  line-height: 1.25;
 }
 
 .preview-result__actions {
@@ -765,14 +782,56 @@ p {
 
 .preview-result__actions a {
   display: inline-flex;
-  min-height: 38px;
+  min-height: 44px;
   align-items: center;
   padding: 0 10px;
   border: 1px solid var(--line-light);
   color: var(--navy-950);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 750;
   text-decoration: none;
+}
+
+.preview-result__details {
+  margin-top: 6px;
+}
+
+.preview-result__details summary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--red-700);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.preview-result__details-body {
+  display: grid;
+  gap: 10px;
+  padding: 2px 0 12px;
+}
+
+.preview-result__details-body strong {
+  color: var(--navy-950);
+  font-size: 0.72rem;
+}
+
+.preview-result__secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.preview-result__secondary-actions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--red-700);
+  font-size: 0.72rem;
+  font-weight: 750;
 }
 
 .preview-result__actions a:hover {
@@ -804,7 +863,7 @@ p {
 .preview-disclaimer {
   margin: 13px 0 0;
   color: var(--ink-500);
-  font-size: 0.61rem;
+  font-size: 0.72rem;
 }
 
 .trust-band {
@@ -970,7 +1029,7 @@ p {
 
 .experience-preview {
   display: grid;
-  grid-template-columns: minmax(250px, 0.65fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(250px, 1fr) auto;
   gap: 80px;
   align-items: center;
   margin-top: 96px;
@@ -989,7 +1048,7 @@ p {
   margin-bottom: 0;
 }
 
-.experience-preview .product-preview {
+.experience-preview__action {
   justify-self: end;
 }
 
@@ -1230,6 +1289,12 @@ p {
   background: var(--cream-50);
 }
 
+.platform-status-note {
+  max-width: 32rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 .info-cta {
   margin-top: 52px;
 }
@@ -1395,9 +1460,8 @@ p {
     gap: 42px;
   }
 
-  .experience-preview .product-preview {
+  .experience-preview__action {
     justify-self: stretch;
-    max-width: none;
   }
 
   .provider-section__overlay {
@@ -1502,7 +1566,7 @@ p {
     border-radius: 14px;
   }
 
-  .preview-result {
+  .preview-result__summary {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
@@ -1510,6 +1574,12 @@ p {
 
   .preview-result__actions {
     width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .preview-result__actions a {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 
   .trust-band,

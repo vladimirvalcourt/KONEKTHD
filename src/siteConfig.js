@@ -7,11 +7,6 @@ export const SITE = {
   providerPortalURL: import.meta.env.VITE_PROVIDER_PORTAL_URL?.trim() || "https://provider.konekt.directory",
 }
 
-export function platformLink(platform) {
-  const configuredURL = platform === "ios" ? SITE.appStoreURL : SITE.googlePlayURL
-  return configuredURL || "/download-the-app"
-}
-
 export function supportMailto(subject = "KONEKT support") {
   return `mailto:${SITE.supportEmail}?subject=${encodeURIComponent(subject)}`
 }

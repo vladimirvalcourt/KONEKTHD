@@ -32,7 +32,7 @@ function LandingPage({ language }) {
             <p className="hero__creole">{text.hero.creoleLine}</p>
             <p className="hero__body">{text.hero.body}</p>
             <div className="button-row">
-              <a className="button button--navy" href="#experience">{text.hero.primary}<Arrow /></a>
+              <a className="button button--navy" href="#provider-search">{text.hero.primary}<Arrow /></a>
               <a className="button button--outline" href="#providers">{text.hero.secondary}<Arrow /></a>
             </div>
           </div>
@@ -83,7 +83,7 @@ function LandingPage({ language }) {
           </div>
           <div>
             <p>{text.services.body}</p>
-            <a className="text-link" href="#experience-preview">{text.services.explore}<Arrow /></a>
+            <a className="text-link" href="#provider-search">{text.services.explore}<Arrow /></a>
           </div>
         </div>
         <div className="shell service-grid">
@@ -95,13 +95,13 @@ function LandingPage({ language }) {
             </article>
           ))}
         </div>
-        <div className="shell experience-preview" id="experience-preview">
+        <div className="shell experience-preview">
           <div className="experience-preview__copy">
             <p className="eyebrow">{language === "ht" ? "Eseye KONEKT" : "Try KONEKT"}</p>
             <h2>{language === "ht" ? "Chèche yon sèvis." : "Search for a service."}</h2>
             <p>{language === "ht" ? "Chwazi yon kategori oswa antre sa ou bezwen an. Chak rezilta montre kiyès ki ka ede w an Kreyòl." : "Choose a category or type what you need. Each result shows who can help you in Haitian Creole."}</p>
           </div>
-          <ProductPreview language={language} />
+          <a className="button button--navy experience-preview__action" href="#provider-search">{language === "ht" ? "Ale nan rechèch la" : "Go to provider search"}<Arrow /></a>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { SITE, platformLink } from "../siteConfig"
+import { SITE } from "../siteConfig"
 
 function localized(value, language) {
   return value?.[language] || value?.en || ""
@@ -41,12 +41,12 @@ export default function InfoPage({ page, language }) {
             <article>
               <p className="eyebrow">iPhone</p>
               <h2>{SITE.appStoreURL ? (language === "ht" ? "Disponib sou App Store" : "Available on the App Store") : (language === "ht" ? "Ap prepare pou lansman" : "Preparing for release")}</h2>
-              <a className="text-link" href={platformLink("ios")}>{SITE.appStoreURL ? (language === "ht" ? "Louvri App Store" : "Open App Store") : (language === "ht" ? "Gade estati a" : "View status")}</a>
+              {SITE.appStoreURL ? <a className="text-link" href={SITE.appStoreURL}>{language === "ht" ? "Louvri App Store" : "Open App Store"}</a> : <p className="platform-status-note">{language === "ht" ? "Lyen ofisyèl la ap parèt isit la apre lansman." : "The official link will appear here after release."}</p>}
             </article>
             <article>
               <p className="eyebrow">Android</p>
               <h2>{SITE.googlePlayURL ? (language === "ht" ? "Disponib sou Google Play" : "Available on Google Play") : (language === "ht" ? "Ap prepare pou lansman" : "Preparing for release")}</h2>
-              <a className="text-link" href={platformLink("android")}>{SITE.googlePlayURL ? (language === "ht" ? "Louvri Google Play" : "Open Google Play") : (language === "ht" ? "Gade estati a" : "View status")}</a>
+              {SITE.googlePlayURL ? <a className="text-link" href={SITE.googlePlayURL}>{language === "ht" ? "Louvri Google Play" : "Open Google Play"}</a> : <p className="platform-status-note">{language === "ht" ? "Lyen ofisyèl la ap parèt isit la apre lansman." : "The official link will appear here after release."}</p>}
             </article>
           </div>
         )}

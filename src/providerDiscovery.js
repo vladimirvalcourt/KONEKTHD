@@ -4,10 +4,17 @@ const CATEGORY_ALIASES = {
   healthcare: ["health", "medical", "clinic", "dental", "therapy", "care"],
   legal: ["legal", "law", "attorney", "immigration"],
   financial: ["financial", "finance", "tax", "account", "insurance"],
+  translation: ["translation", "interpretation", "interpreter", "language service"],
   community: ["community", "education", "housing", "food", "social", "nonprofit"],
 }
 
+export const PROVIDER_CATEGORIES = ["healthcare", "legal", "financial", "translation", "community"]
+
 let providerRequest
+
+const KNOWN_UNAVAILABLE_URLS = new Set([
+  "https://www.hillphysicians.com/doctor/lydie-dahlia-francillon-md",
+])
 
 function configuredSupabase() {
   const url = import.meta.env.VITE_SUPABASE_URL?.replace(/\/$/, "")
@@ -39,6 +46,11 @@ export function providerMatches(provider, { category = "all", query = "" } = {})
   return searchable.includes(normalized)
 }
 
+export function availableProviderCategories(providers) {
+  const available = new Set(providers.map(providerCategory))
+  return PROVIDER_CATEGORIES.filter((category) => available.has(category))
+}
+
 export function splitProvidersForState(providers, stateCode) {
   const normalizedState = stateCode?.toUpperCase()
   return {
@@ -51,20 +63,40 @@ export function safeExternalUrl(value) {
   if (!value) return null
   try {
     const candidate = new URL(value.startsWith("http") ? value : `https://${value}`)
-    return ["http:", "https:"].includes(candidate.protocol) ? candidate.href : null
+    if (!["http:", "https:"].includes(candidate.protocol)) return null
+    const normalized = candidate.href.replace(/\/$/, "")
+    return KNOWN_UNAVAILABLE_URLS.has(normalized) ? null : candidate.href
   } catch {
     return null
   }
 }
 
+export function isLikelyBookingUrl(value) {
+  const url = safeExternalUrl(value)
+  if (!url) return false
+  return /(?:book|booking|appointment|schedule|request-an-appointment|make-an-appointment)/i.test(new URL(url).pathname)
+}
+
+export function directionsUrl(provider) {
+  const destination = provider.address?.trim()
+  if (!destination) return null
+  const params = new URLSearchParams({ api: "1", destination })
+  return `https://www.google.com/maps/dir/?${params}`
+}
+
 export function loadPublishedProviders() {
   if (providerRequest) return providerRequest
   const { url, key } = configuredSupabase()
-  const columns = ["id", "name", "business_name", "category", "specialty", "specialty_ht", "description", "description_ht", "phone", "website", "appointment_url", "address", "service_area", "latitude", "longitude", "image_url", "services", "language_access_type", "language_verification_status", "business_verification_status", "accepting_new_patients"].join(",")
-  const endpoint = `${url}/rest/v1/providers?select=${columns}&publication_status=eq.PUBLISHED&order=name.asc`
-  providerRequest = fetch(endpoint, { headers: { apikey: key } }).then(async (response) => {
-    if (!response.ok) throw new Error(`provider-directory-${response.status}`)
-    return response.json()
+  const columns = ["id", "name", "business_name", "category", "specialty", "specialty_ht", "description", "description_ht", "phone", "website", "appointment_url", "address", "service_area", "latitude", "longitude", "image_url", "services", "language_access_type", "language_verification_status", "business_verification_status", "accepting_new_patients", "hours_status_text", "weekly_hours", "insurance_accepted", "medicaid_accepted", "medicare_accepted", "telehealth_available", "last_verified_at"].join(",")
+  const headers = { apikey: key }
+  const publicEndpoint = `${url}/rest/v1/public_provider_directory?select=${columns}&order=name.asc`
+  const compatibleEndpoint = `${url}/rest/v1/providers?select=${columns}&publication_status=eq.PUBLISHED&order=name.asc`
+  providerRequest = fetch(publicEndpoint, { headers }).then(async (response) => {
+    if (response.ok) return response.json()
+    if (response.status !== 404) throw new Error(`provider-directory-${response.status}`)
+    const fallback = await fetch(compatibleEndpoint, { headers })
+    if (!fallback.ok) throw new Error(`provider-directory-${fallback.status}`)
+    return fallback.json()
   }).catch((error) => {
     providerRequest = undefined
     throw error
