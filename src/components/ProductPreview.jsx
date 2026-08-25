@@ -131,6 +131,11 @@ function getErrorCopy(error, language) {
   return (messages[error?.message] || messages.default)[language]
 }
 
+function formatLabel(value) {
+  if (!value) return value
+  return String(value).replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+}
+
 function languageAccess(provider, language) {
   const type = provider.language_access_type?.toLowerCase()
   if (type?.includes("provider")) return language === "ht" ? "Founisè a pale Kreyòl" : "Provider speaks Haitian Creole"
@@ -161,7 +166,7 @@ function providerDetails(provider, language) {
   if (provider.service_area) items.push({ label: isHT ? "Zòn sèvis" : "Service area", value: localizedLocation(provider.service_area, language) })
   if (provider.accepting_new_patients) items.push({ label: isHT ? "Disponiblite" : "Availability", value: isHT ? "Aksepte nouvo kliyan oswa pasyan" : "Accepting new clients or patients" })
   if (provider.telehealth_available) items.push({ label: isHT ? "Opsyon" : "Options", value: isHT ? "Sèvis adistans disponib" : "Remote service available" })
-  const insurance = Array.isArray(provider.insurance_accepted) ? provider.insurance_accepted.filter(Boolean) : []
+  const insurance = Array.isArray(provider.insurance_accepted) ? provider.insurance_accepted.filter(Boolean).map(formatLabel) : []
   if (provider.medicaid_accepted) insurance.unshift("Medicaid")
   if (provider.medicare_accepted) insurance.unshift("Medicare")
   if (insurance.length) items.push({ label: isHT ? "Asirans" : "Insurance", value: [...new Set(insurance)].join(", ") })
@@ -180,7 +185,7 @@ function ProviderCard({ provider, language }) {
   const primaryWebsite = website || (!booking ? appointment : null)
   const directions = directionsUrl(provider)
   const phone = provider.phone?.replace(/[^\d+]/g, "")
-  const services = Array.isArray(provider.services) ? provider.services.filter(Boolean).map((service) => isHT ? (serviceLabelsHT[service.toLowerCase()] || service) : service) : []
+  const services = Array.isArray(provider.services) ? provider.services.filter(Boolean).map((service) => { const localized = isHT ? serviceLabelsHT[service.toLowerCase()] : null; return localized || formatLabel(service); }) : []
   const details = providerDetails(provider, language)
   const verifiedLanguage = verifiedLanguageAccess(provider, language)
   return (
@@ -188,7 +193,7 @@ function ProviderCard({ provider, language }) {
       <div className="preview-result__summary">
         <div className="preview-result__copy">
         <h3>{name}</h3>
-        <p>{[specialty || provider.category, localizedLocation(provider.address, language)].filter(Boolean).join(" · ")}</p>
+        <p>{[formatLabel(specialty || provider.category), localizedLocation(provider.address, language)].filter(Boolean).join(" · ")}</p>
         <span className="preview-language-badge">{languageAccess(provider, language)}</span>
           {verifiedLanguage && <span className="preview-verified-badge">{verifiedLanguage}</span>}
         </div>
