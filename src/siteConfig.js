@@ -3,7 +3,7 @@ export const SITE = {
   supportEmail: import.meta.env.VITE_SUPPORT_EMAIL?.trim() || "support@konektapp.com",
   appStoreURL: import.meta.env.VITE_APP_STORE_URL?.trim() || "",
   googlePlayURL: import.meta.env.VITE_GOOGLE_PLAY_URL?.trim() || "",
-  canonicalURL: import.meta.env.VITE_SITE_URL?.trim() || "https://konektapp.com",
+  canonicalURL: import.meta.env.VITE_SITE_URL?.trim() || "https://www.konekt.directory",
 }
 
 export function platformLink(platform) {
