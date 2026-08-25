@@ -1,5 +1,6 @@
 import { readFile, readdir } from "node:fs/promises"
 import { extname, join } from "node:path"
+import { copy } from "../src/content.js"
 
 const root = new URL("..", import.meta.url)
 const sourceRoot = new URL("../src/", import.meta.url)
@@ -28,6 +29,9 @@ async function sourceFiles(directoryURL) {
 
 const files = [...await sourceFiles(sourceRoot), new URL("../index.html", import.meta.url)]
 const findings = []
+
+const creoleInEnglish = JSON.stringify(copy.en).match(/\b(Jwenn|Chèche|Kreyòl|founisè|sèvis)\b/iu)
+if (creoleInEnglish) findings.push(`src/content.js: Haitian Creole word in English copy: ${creoleInEnglish[0]}`)
 for (const file of files) {
   const content = await readFile(file, "utf8")
   for (const claim of bannedClaims) {

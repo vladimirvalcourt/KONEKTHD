@@ -33,10 +33,10 @@ function getErrorCopy(error, language) {
 
 function languageAccess(provider, language) {
   const type = provider.language_access_type?.toLowerCase()
-  if (type?.includes("provider")) return language === "ht" ? "Founisè a pale Kreyòl" : "Provider speaks Kreyòl"
-  if (type?.includes("staff")) return language === "ht" ? "Yon anplwaye pale Kreyòl" : "Staff member speaks Kreyòl"
+  if (type?.includes("provider")) return language === "ht" ? "Founisè a pale Kreyòl" : "Provider speaks Haitian Creole"
+  if (type?.includes("staff")) return language === "ht" ? "Yon anplwaye pale Kreyòl" : "Staff member speaks Haitian Creole"
   if (type?.includes("interpreter")) return language === "ht" ? "Gen yon entèprèt" : "Interpreter available"
-  return language === "ht" ? "Mande sou sèvis an Kreyòl" : "Ask about Kreyòl service"
+  return language === "ht" ? "Mande sou sèvis an Kreyòl" : "Ask about Haitian Creole support"
 }
 
 function ProviderCard({ provider, language }) {
@@ -152,7 +152,7 @@ export default function ProductPreview({ language }) {
             {status === "error" && <p className="preview-error" role="alert">{getErrorCopy(error, language)}</p>}
             {status === "ready" && <><div className="preview-results__heading"><strong>{isHT ? "Nan zòn ou" : "In your area"}</strong><span>{results.local.length}</span></div>{results.local.length ? results.local.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />) : <p className="preview-empty">{isHT ? "Nou poko gen yon founisè ki mache ak rechèch sa a nan eta ou. Eseye yon lòt sèvis." : "We do not have a matching provider in your state yet. Try another service."}</p>}{!!results.nationwide.length && <section className="preview-nationwide" aria-label={isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}><div className="preview-results__heading"><strong>{isHT ? "Sèvis adistans nan tout peyi a" : "Nationwide remote services"}</strong><span>{results.nationwide.length}</span></div>{results.nationwide.map((provider) => <ProviderCard key={provider.id} provider={provider} language={language} />)}</section>}</>}
           </div>
-          <p className="preview-disclaimer">{isHT ? "Konfime detay, disponiblite, ak sèvis an Kreyòl dirèkteman ak founisè a." : "Confirm details, availability, and Kreyòl access directly with the provider."}</p>
+          <p className="preview-disclaimer">{isHT ? "Konfime detay, disponiblite, ak sèvis an Kreyòl dirèkteman ak founisè a." : "Confirm details, availability, and Haitian Creole support directly with the provider."}</p>
         </>
       )}
     </div>

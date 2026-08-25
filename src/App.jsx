@@ -99,7 +99,7 @@ function LandingPage({ language }) {
           <div className="experience-preview__copy">
             <p className="eyebrow">{language === "ht" ? "Eseye KONEKT" : "Try KONEKT"}</p>
             <h2>{language === "ht" ? "Chèche yon sèvis." : "Search for a service."}</h2>
-            <p>{language === "ht" ? "Chwazi yon kategori oswa antre sa ou bezwen an. Chak rezilta montre kiyès ki ka ede w an Kreyòl." : "Choose a category or type what you need. Each result shows who can help you in Kreyòl."}</p>
+            <p>{language === "ht" ? "Chwazi yon kategori oswa antre sa ou bezwen an. Chak rezilta montre kiyès ki ka ede w an Kreyòl." : "Choose a category or type what you need. Each result shows who can help you in Haitian Creole."}</p>
           </div>
           <ProductPreview language={language} />
         </div>
@@ -158,7 +158,7 @@ export default function App() {
 
   useEffect(() => {
     if (isLanding) {
-      document.title = language === "ht" ? "KONEKT — Jwenn sèvis ak èd an Kreyòl" : "KONEKT — Find services and help in Kreyòl"
+      document.title = language === "ht" ? "KONEKT — Jwenn sèvis ak èd an Kreyòl" : "KONEKT — Find services and Haitian Creole support"
       return
     }
     const pageTitle = activePage?.title?.[language] || activePage?.title?.en

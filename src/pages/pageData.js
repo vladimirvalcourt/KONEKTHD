@@ -6,10 +6,10 @@ export const pageData = {
   "/discover-businesses": {
     eyebrow: bilingual("Find a service", "Jwenn yon sèvis"),
     title: bilingual("Find the help you need before you make the call.", "Jwenn èd ou bezwen an anvan ou fè apèl la."),
-    intro: bilingual("Search for services, compare useful details, and see who can help you in Kreyòl before you contact a provider.", "Chèche sèvis, konpare enfòmasyon ki itil, epi wè kiyès ki ka ede w an Kreyòl anvan ou kontakte yon founisè."),
+    intro: bilingual("Search for services, compare useful details, and see who can help you in Haitian Creole before you contact a provider.", "Chèche sèvis, konpare enfòmasyon ki itil, epi wè kiyès ki ka ede w an Kreyòl anvan ou kontakte yon founisè."),
     sections: [
       { title: bilingual("Search by need", "Chèche selon bezwen ou"), body: bilingual("Browse healthcare, legal and immigration, financial, housing, food, beauty, translation, and professional services.", "Gade swen sante, lalwa ak imigrasyon, finans, kay, manje, bote, tradiksyon, ak sèvis pwofesyonèl.") },
-      { title: bilingual("See who speaks Kreyòl", "Wè kiyès ki pale Kreyòl"), body: bilingual("Each profile tells you whether the provider speaks Kreyòl, a staff member can help, or an interpreter is available.", "Chak pwofil montre si founisè a pale Kreyòl, si gen yon anplwaye ki ka ede w, oswa si gen yon entèprèt.") },
+      { title: bilingual("See who speaks Haitian Creole", "Wè kiyès ki pale Kreyòl"), body: bilingual("Each profile tells you whether the provider speaks Haitian Creole, a staff member can help, or an interpreter is available.", "Chak pwofil montre si founisè a pale Kreyòl, si gen yon anplwaye ki ka ede w, oswa si gen yon entèprèt.") },
       { title: bilingual("Contact providers directly", "Kontakte founisè yo dirèkteman"), body: bilingual("Use the public profile to call, open directions, visit a website, or continue to booking when the provider offers it.", "Sèvi ak pwofil piblik la pou rele, jwenn direksyon, vizite sit entènèt la, oswa pran randevou lè founisè a ofri sa.") },
     ],
     cta: { label: bilingual("Search providers", "Chèche founisè"), href: "/#experience" },
@@ -20,7 +20,7 @@ export const pageData = {
     intro: bilingual("Use the provider website or mobile app. If your service is already listed, request permission to manage it. If it is not listed, create a new profile. KONEKT reviews requests and new profiles before making changes public.", "Sèvi ak sit founisè a oswa aplikasyon mobil la. Si sèvis ou deja nan lis la, mande pèmisyon pou jere li. Si li poko nan lis la, kreye yon nouvo pwofil. KONEKT tcheke demann ak nouvo pwofil yo anvan chanjman yo parèt pou tout moun."),
     steps: [
       { number: "01", title: bilingual("Find or add your profile", "Jwenn oswa ajoute pwofil ou"), body: bilingual("Search for your service first. If it is already listed, request access. If not, add it.", "Chèche sèvis ou anvan. Si li deja nan lis la, mande aksè. Si li pa la, ajoute li.") },
-      { number: "02", title: bilingual("Tell people what they need to know", "Bay moun enfòmasyon yo bezwen"), body: bilingual("Add your contact information, hours, services, public photo, and details about help in Kreyòl.", "Ajoute kontak, lè, sèvis, foto piblik, ak detay sou èd an Kreyòl.") },
+      { number: "02", title: bilingual("Tell people what they need to know", "Bay moun enfòmasyon yo bezwen"), body: bilingual("Add your contact information, hours, services, public photo, and details about Haitian Creole support.", "Ajoute kontak, lè, sèvis, foto piblik, ak detay sou èd an Kreyòl.") },
       { number: "03", title: bilingual("Send it to KONEKT", "Voye li bay KONEKT"), body: bilingual("KONEKT checks the profile before it goes public. Only authorized reviewers can see private verification documents.", "KONEKT tcheke pwofil la anvan li parèt pou tout moun. Se sèlman moun otorize ki ka wè dokiman verifikasyon prive yo.") },
     ],
     cta: { label: bilingual("Open provider account", "Louvri kont founisè a"), href: SITE.providerPortalURL },
@@ -44,28 +44,28 @@ export const pageData = {
   },
   "/our-story": {
     eyebrow: bilingual("Why KONEKT exists", "Poukisa KONEKT egziste"),
-    title: bilingual("Families should know where they can get help in Kreyòl.", "Fanmi yo dwe konnen ki kote yo ka jwenn èd an Kreyòl."),
-    intro: bilingual("KONEKT helps Haitian communities find services and see who can speak Kreyòl with them before they call.", "KONEKT ede kominote ayisyen jwenn sèvis epi wè kiyès ki ka pale Kreyòl avè yo anvan yo rele."),
+    title: bilingual("Families should know where they can get help in Haitian Creole.", "Fanmi yo dwe konnen ki kote yo ka jwenn èd an Kreyòl."),
+    intro: bilingual("KONEKT helps Haitian communities find services and see who can speak Haitian Creole with them before they call.", "KONEKT ede kominote ayisyen jwenn sèvis epi wè kiyès ki ka pale Kreyòl avè yo anvan yo rele."),
     sections: [
-      { title: bilingual("Useful details first", "Enfòmasyon itil an premye"), body: bilingual("Profiles show names, locations, hours, services, contact information, and how Kreyòl help is available.", "Pwofil yo montre non, kote, lè, sèvis, kontak, ak kijan moun ka jwenn èd an Kreyòl.") },
+      { title: bilingual("Useful details first", "Enfòmasyon itil an premye"), body: bilingual("Profiles show names, locations, hours, services, contact information, and how Haitian Creole support is available.", "Pwofil yo montre non, kote, lè, sèvis, kontak, ak kijan moun ka jwenn èd an Kreyòl.") },
       { title: bilingual("Anyone can search", "Tout moun ka chèche"), body: bilingual("You do not need an account to browse public profiles. Only providers sign in when they need to add or manage a profile.", "Ou pa bezwen kont pou gade pwofil piblik yo. Se sèlman founisè ki konekte lè yo bezwen ajoute oswa jere yon pwofil.") },
       { title: bilingual("KONEKT checks important changes", "KONEKT tcheke gwo chanjman yo"), body: bilingual("Authorized reviewers decide when a profile or verification update is ready to appear publicly.", "Moun KONEKT otorize yo deside kilè yon pwofil oswa yon enfòmasyon verifye pare pou parèt pou tout moun.") },
     ],
   },
   "/mission-vision": {
     eyebrow: bilingual("Mission", "Misyon"),
-    title: bilingual("Make services easier to find and Kreyòl help easier to understand.", "Fè sèvis pi fasil pou jwenn epi fè èd an Kreyòl pi fasil pou konprann."),
-    intro: bilingual("KONEKT helps people answer two questions: Where can I get the service I need, and who can help me in Kreyòl?", "KONEKT ede moun reponn de kesyon: Ki kote mwen ka jwenn sèvis mwen bezwen an, epi kiyès ki ka ede m an Kreyòl?"),
+    title: bilingual("Make services easier to find and Haitian Creole support easier to understand.", "Fè sèvis pi fasil pou jwenn epi fè èd an Kreyòl pi fasil pou konprann."),
+    intro: bilingual("KONEKT helps people answer two questions: Where can I get the service I need, and who can help me in Haitian Creole?", "KONEKT ede moun reponn de kesyon: Ki kote mwen ka jwenn sèvis mwen bezwen an, epi kiyès ki ka ede m an Kreyòl?"),
     sections: [
       { title: bilingual("Clarity", "Klète"), body: bilingual("Show what a provider offers, where they work, and how to contact them.", "Montre sèvis founisè a bay, kote li travay, ak kijan pou kontakte li.") },
-      { title: bilingual("Help in Kreyòl", "Èd an Kreyòl"), body: bilingual("Show whether the provider speaks Kreyòl, a staff member can help, or an interpreter is available.", "Montre si founisè a pale Kreyòl, si gen yon anplwaye ki ka ede, oswa si gen yon entèprèt.") },
+      { title: bilingual("Haitian Creole support", "Èd an Kreyòl"), body: bilingual("Show whether the provider speaks Haitian Creole, a staff member can help, or an interpreter is available.", "Montre si founisè a pale Kreyòl, si gen yon anplwaye ki ka ede, oswa si gen yon entèprèt.") },
       { title: bilingual("Careful review", "Revizyon ki fèt ak swen"), body: bilingual("Show only what KONEKT can support with provider information, public sources, or reviewed documents.", "Montre sèlman sa KONEKT ka konfime ak enfòmasyon founisè a, sous piblik, oswa dokiman ekip la tcheke.") },
     ],
   },
   "/community-partners": {
     eyebrow: bilingual("Community partners", "Patnè kominotè"),
     title: bilingual("Local knowledge makes a directory useful.", "Konesans lokal fè yon anyè itil."),
-    intro: bilingual("KONEKT welcomes conversations with community organizations, people who help families find services, and trusted local institutions that can improve provider information and help in Kreyòl.", "KONEKT ouvè pou pale ak òganizasyon kominotè, moun ki ede fanmi jwenn sèvis, ak enstitisyon lokal ki ka amelyore enfòmasyon sou founisè ak èd an Kreyòl."),
+    intro: bilingual("KONEKT welcomes conversations with community organizations, people who help families find services, and trusted local institutions that can improve provider information and Haitian Creole support.", "KONEKT ouvè pou pale ak òganizasyon kominotè, moun ki ede fanmi jwenn sèvis, ak enstitisyon lokal ki ka amelyore enfòmasyon sou founisè ak èd an Kreyòl."),
     cta: { label: bilingual("Start a conversation", "Kòmanse yon konvèsasyon"), href: `mailto:${SITE.supportEmail}?subject=KONEKT%20community%20partnership` },
   },
   "/careers": {
@@ -117,7 +117,7 @@ export const pageData = {
     sections: [
       { title: bilingual("Directory information", "Enfòmasyon anyè a"), body: bilingual("A listing does not create an endorsement, professional relationship, or guarantee of availability, outcome, licensing, or quality.", "Yon pwofil pa vle di KONEKT rekòmande sèvis la, li pa kreye relasyon pwofesyonèl, epi li pa garanti disponiblite, rezilta, lisans, oswa kalite.") },
       { title: bilingual("Healthcare, legal, and financial decisions", "Desizyon sante, legal, ak finansye"), body: bilingual("KONEKT does not provide medical, legal, financial, or emergency advice. Contact qualified professionals and emergency services when appropriate.", "KONEKT pa bay konsèy medikal, legal, finansye, oswa ijans. Kontakte pwofesyonèl kalifye ak sèvis ijans lè sa nesesè.") },
-      { title: bilingual("Provider submissions", "Enfòmasyon founisè voye"), body: bilingual("Providers must submit accurate information, share only photos they have permission to use, protect private verification documents, and describe Kreyòl support honestly.", "Founisè dwe bay enfòmasyon ki kòrèk, pataje sèlman foto yo gen dwa sèvi avè yo, pwoteje dokiman verifikasyon prive, epi dekri èd an Kreyòl jan li ye a.") },
+      { title: bilingual("Provider submissions", "Enfòmasyon founisè voye"), body: bilingual("Providers must submit accurate information, share only photos they have permission to use, protect private verification documents, and describe Haitian Creole support honestly.", "Founisè dwe bay enfòmasyon ki kòrèk, pataje sèlman foto yo gen dwa sèvi avè yo, pwoteje dokiman verifikasyon prive, epi dekri èd an Kreyòl jan li ye a.") },
       { title: bilingual("Reports and profile review", "Rapò ak revizyon pwofil"), body: bilingual("KONEKT may review, correct, hide, pause, or remove content to protect people and keep the directory accurate. This page does not promise a fixed response time.", "KONEKT ka tcheke, korije, kache, mete an poz, oswa retire kontni pou pwoteje moun epi kenbe anyè a egzak. Paj sa a pa pwomèt yon delè fiks pou repons.") },
       { title: bilingual("Provider accounts", "Kont founisè"), body: bilingual("You must be authorized to represent the provider connected to an account, keep access to the account secure, and promptly report unauthorized use. KONEKT may restrict or close accounts that misuse the service, misrepresent identity or authority, or threaten safety and integrity.", "Ou dwe gen otorizasyon pou reprezante founisè ki konekte ak kont lan, pwoteje aksè kont lan, epi rapòte itilizasyon san pèmisyon byen vit. KONEKT ka limite oswa fèmen kont ki mal sèvi ak sèvis la, bay fo enfòmasyon sou idantite oswa otorizasyon, oswa mete sekirite ak entegrite an danje.") },
       { title: bilingual("Acceptable use", "Itilizasyon ki akseptab"), body: bilingual("Do not break the law, impersonate others, submit harmful or deceptive content, probe protected systems, interfere with the service, harvest personal information, or use KONEKT to distribute spam or malware.", "Pa vyole lalwa, pa pran pòz yon lòt moun, pa voye kontni danjere oswa twonpe moun, pa teste sistèm pwoteje san pèmisyon, pa deranje sèvis la, pa ranmase enfòmasyon pèsonèl, epi pa sèvi ak KONEKT pou voye mesaj fatra oswa lojisyèl danjere.") },
