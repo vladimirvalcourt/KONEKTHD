@@ -9,12 +9,12 @@ export default function SiteFooter({ language, onLanguageChange }) {
       <div className="shell site-footer__grid">
         <div className="site-footer__brand">
           <BrandMark compact />
-          <p>{isHT ? "KONEKT ede kominote ayisyen ak moun ki pale Kreyòl jwenn sèvis ak bon enfòmasyon." : "KONEKT helps Haitian and Haitian Creole-speaking communities find services with clearer information."}</p>
+          <p>{isHT ? "KONEKT ede w jwenn sèvis epi konnen kiyès ki ka ede w an Kreyòl." : "KONEKT helps you find services and know who can help you in Kreyòl."}</p>
         </div>
         <div>
           <h2>{isHT ? "Eksplore" : "Explore"}</h2>
           <a href="/#experience">{isHT ? "Chèche sèvis" : "Explore services"}</a>
-          <a href="/#language-access">{isHT ? "Aksè nan lang" : "Language access"}</a>
+          <a href="/#language-access">{isHT ? "Èd an Kreyòl" : "Help in Kreyòl"}</a>
           <a href="/discover-businesses">{isHT ? "Kategori sèvis" : "Service categories"}</a>
         </div>
         <div>

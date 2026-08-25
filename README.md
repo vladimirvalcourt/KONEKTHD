@@ -1,6 +1,6 @@
 # KONEKT public website
 
-This repository owns KONEKT's bilingual public landing experience. It explains the product, demonstrates service discovery, gives providers a clear participation path, and hosts support, privacy, terms, and release-status pages.
+This repository owns KONEKT's bilingual public landing and account-free provider discovery experience. It explains the product, finds published providers by state, gives providers a clear participation path, and hosts support, privacy, terms, and release-status pages.
 
 It does not contain the KONEKT directory backend or the private moderation dashboard. The mobile clients and this website remain untrusted public surfaces; publication, verification, ownership, and private-evidence access stay server-controlled.
 
@@ -13,10 +13,11 @@ The site avoids unsupported scale claims, synthetic testimonials, fake ratings, 
 ## Experience
 
 - Editorial English and Haitian Creole landing page
-- Interactive, clearly labeled product preview with sample content
+- Account-free public search backed by published provider records
 - Responsive navigation and layouts from 390-pixel phones through desktop
 - Provider claim/add/review explanation
 - Support, privacy, terms, age-rating, and release-status routes
+- Live published-provider search scoped by ZIP code or opt-in browser location
 - Store URLs activated only through environment configuration
 - Search, social, sitemap, manifest, and security-header foundations
 

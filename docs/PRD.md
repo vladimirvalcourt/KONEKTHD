@@ -4,7 +4,7 @@
 
 Help a visitor understand what KONEKT does in less than one page section, then give them an honest next action:
 
-1. Explore how service discovery works.
+1. Find published providers in their state by ZIP code or opt-in location access.
 2. Understand how Kreyòl access is described.
 3. Learn how to add or claim a provider profile.
 4. Reach support or accurate platform-release information.
@@ -25,7 +25,9 @@ KONEKT is a focused service directory, not a social network or generic global ma
 - English and Haitian Creole controls must update the primary public experience.
 - Community discovery must remain account-free.
 - Healthcare-specific language must not leak into unrelated categories.
-- Product previews must be clearly illustrative.
+- Provider discovery must use published Supabase records and remain account-free.
+- Visitors must choose a ZIP code or explicitly grant location access before local results appear.
+- Nationwide remote services must be labeled separately and must not silently replace missing local results.
 - Every visible CTA must navigate, filter, switch language, open support, or report truthful platform status.
 - App-store badges and links must not appear until official listing URLs are configured.
 - Public copy must not invent metrics, testimonials, ratings, certifications, moderation SLAs, product capabilities, or data collection.
@@ -34,7 +36,6 @@ KONEKT is a focused service directory, not a social network or generic global ma
 
 ## Non-goals
 
-- Public directory API integration
 - Provider authentication or submission
 - Admin moderation
 - Service-role access

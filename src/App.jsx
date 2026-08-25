@@ -97,9 +97,9 @@ function LandingPage({ language }) {
         </div>
         <div className="shell experience-preview" id="experience-preview">
           <div className="experience-preview__copy">
-            <p className="eyebrow">{language === "ht" ? "Apèsi entèaktif" : "Interactive preview"}</p>
-            <h2>{language === "ht" ? "Eseye kijan rechèch la santi li." : "Try the discovery experience."}</h2>
-            <p>{language === "ht" ? "Chanje kategori, chèche yon sèvis, epi wè kijan aksè nan lang lan parèt nan bon kontèks la." : "Change categories, search for a service, and see how language access appears in context."}</p>
+            <p className="eyebrow">{language === "ht" ? "Eseye KONEKT" : "Try KONEKT"}</p>
+            <h2>{language === "ht" ? "Chèche yon sèvis." : "Search for a service."}</h2>
+            <p>{language === "ht" ? "Chwazi yon kategori oswa antre sa ou bezwen an. Chak rezilta montre kiyès ki ka ede w an Kreyòl." : "Choose a category or type what you need. Each result shows who can help you in Kreyòl."}</p>
           </div>
           <ProductPreview language={language} />
         </div>
@@ -113,7 +113,7 @@ function LandingPage({ language }) {
             <h2 id="provider-title">{text.provider.title}</h2>
             <p>{text.provider.body}</p>
             <div className="button-row">
-              <a className="button button--gold" href={SITE.providerPortalURL}>{language === "ht" ? "Louvri espas founisè a" : "Open provider workspace"}<Arrow /></a>
+              <a className="button button--gold" href={SITE.providerPortalURL}>{language === "ht" ? "Louvri kont founisè a" : "Open provider account"}<Arrow /></a>
               <a className="button button--ghost" href="/community-reviews">{text.provider.secondary}<Arrow /></a>
             </div>
             <p className="provider-section__note"><Icon name="file-lock" /> {text.provider.note}</p>
@@ -158,7 +158,7 @@ export default function App() {
 
   useEffect(() => {
     if (isLanding) {
-      document.title = language === "ht" ? "KONEKT — Jwenn sèvis nan lang ou" : "KONEKT — Find services with clear Kreyòl access"
+      document.title = language === "ht" ? "KONEKT — Jwenn sèvis ak èd an Kreyòl" : "KONEKT — Find services and help in Kreyòl"
       return
     }
     const pageTitle = activePage?.title?.[language] || activePage?.title?.en
