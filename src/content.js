@@ -53,7 +53,6 @@ export const copy = {
       body: "If your service is already listed, request permission to manage it. If it is not listed, add a new profile with your contact details, hours, services, and Haitian Creole support.",
       primary: "Open provider account",
       secondary: "Learn how KONEKT reviews profiles",
-      note: "People can see your public profile. Only authorized reviewers can see your verification documents.",
     },
     close: {
       eyebrow: "KONEKT for iPhone and Android",
@@ -117,7 +116,6 @@ export const copy = {
       body: "Si sèvis ou deja nan lis la, mande pèmisyon pou jere pwofil la. Si li poko nan lis la, ajoute yon pwofil ak kontak, lè, sèvis, ak fason moun ka jwenn èd an Kreyòl.",
       primary: "Louvri kont founisè a",
       secondary: "Kijan KONEKT tcheke pwofil yo",
-      note: "Tout moun ka wè pwofil piblik la. Se sèlman moun otorize ki ka wè dokiman verifikasyon yo.",
     },
     close: {
       eyebrow: "KONEKT pou iPhone ak Android",

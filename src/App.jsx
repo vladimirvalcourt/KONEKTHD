@@ -116,7 +116,6 @@ function LandingPage({ language }) {
               <a className="button button--gold" href={SITE.providerPortalURL}>{language === "ht" ? "Louvri kont founisè a" : "Open provider account"}<Arrow /></a>
               <a className="button button--ghost" href="/community-reviews">{text.provider.secondary}<Arrow /></a>
             </div>
-            <p className="provider-section__note"><Icon name="file-lock" /> {text.provider.note}</p>
           </div>
         </div>
       </section>
