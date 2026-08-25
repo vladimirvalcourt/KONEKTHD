@@ -50,7 +50,7 @@ export const copy = {
     provider: {
       eyebrow: "For providers",
       title: "Help people find and understand your service.",
-      body: "If your service is already listed, request permission to manage it. If it is not listed, add a new profile with your contact details, hours, services, and Haitian Creole support.",
+      body: "First, create a provider account or sign in. Then request permission to manage an existing service, or add a new profile with your contact details, hours, services, and Haitian Creole support.",
       primary: "Open provider account",
       secondary: "Learn how KONEKT reviews profiles",
     },
@@ -113,7 +113,7 @@ export const copy = {
     provider: {
       eyebrow: "Pou founisè",
       title: "Ede moun jwenn sèvis ou epi konprann sa ou ofri.",
-      body: "Si sèvis ou deja nan lis la, mande pèmisyon pou jere pwofil la. Si li poko nan lis la, ajoute yon pwofil ak kontak, lè, sèvis, ak fason moun ka jwenn èd an Kreyòl.",
+      body: "Premyèman, kreye yon kont founisè oswa konekte. Apre sa, mande pèmisyon pou jere yon sèvis ki deja nan lis la, oswa ajoute yon nouvo pwofil ak kontak, lè, sèvis, ak fason moun ka jwenn èd an Kreyòl.",
       primary: "Louvri kont founisè a",
       secondary: "Kijan KONEKT tcheke pwofil yo",
     },
