@@ -4,6 +4,7 @@ export const SITE = {
   appStoreURL: import.meta.env.VITE_APP_STORE_URL?.trim() || "",
   googlePlayURL: import.meta.env.VITE_GOOGLE_PLAY_URL?.trim() || "",
   canonicalURL: import.meta.env.VITE_SITE_URL?.trim() || "https://www.konekt.directory",
+  providerPortalURL: import.meta.env.VITE_PROVIDER_PORTAL_URL?.trim() || "https://provider.konekt.directory",
 }
 
 export function platformLink(platform) {

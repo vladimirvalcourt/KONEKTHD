@@ -19,7 +19,7 @@ export default function SiteFooter({ language, onLanguageChange }) {
         </div>
         <div>
           <h2>{isHT ? "Pou founisè" : "For providers"}</h2>
-          <a href="/list-your-business">{isHT ? "Ajoute oswa reklame pwofil" : "Add or claim a profile"}</a>
+          <a href={SITE.providerPortalURL}>{isHT ? "Ajoute oswa reklame pwofil" : "Add or claim a profile"}</a>
           <a href="/community-reviews">{isHT ? "Kijan revizyon mache" : "How review works"}</a>
           <a href="/help-center">{isHT ? "Sant èd" : "Help center"}</a>
         </div>

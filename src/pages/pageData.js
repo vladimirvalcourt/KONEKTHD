@@ -17,13 +17,13 @@ export const pageData = {
   "/list-your-business": {
     eyebrow: bilingual("For providers", "Pou founisè"),
     title: bilingual("Add or claim your community service.", "Ajoute oswa reklame sèvis ou nan kominote a."),
-    intro: bilingual("Providers use the KONEKT mobile app to claim an existing profile or create a new one. Publication and verification remain review decisions.", "Founisè yo sèvi ak aplikasyon mobil KONEKT la pou reklame yon pwofil oswa kreye youn. Piblikasyon ak verifikasyon rete desizyon ekip revizyon an."),
+    intro: bilingual("Providers can use the secure KONEKT web workspace or mobile app to claim an existing profile or create a new one. Publication and verification remain review decisions.", "Founisè yo ka sèvi ak espas entènèt KONEKT ki pwoteje oswa aplikasyon mobil la pou reklame yon pwofil oswa kreye youn. Piblikasyon ak verifikasyon rete desizyon ekip revizyon an."),
     steps: [
       { number: "01", title: bilingual("Choose your path", "Chwazi chemen ou"), body: bilingual("Search for an existing profile to claim, or begin a new service profile.", "Chèche yon pwofil ki deja egziste pou reklame li, oswa kòmanse yon nouvo pwofil sèvis.") },
       { number: "02", title: bilingual("Share accurate details", "Bay enfòmasyon ki kòrèk"), body: bilingual("Add identity, contact, hours, service details, language access, and role-appropriate public media.", "Ajoute idantite, kontak, lè, sèvis, aksè nan lang, ak bon foto piblik pou wòl ou.") },
       { number: "03", title: bilingual("Submit for review", "Voye pou revizyon"), body: bilingual("Private evidence stays private. Approved public information can be published after review.", "Dokiman prive rete prive. Enfòmasyon piblik ki apwouve ka parèt apre revizyon.") },
     ],
-    cta: { label: bilingual("Check mobile availability", "Tcheke disponiblite mobil"), href: "/download-the-app" },
+    cta: { label: bilingual("Open provider workspace", "Louvri espas founisè a"), href: SITE.providerPortalURL },
   },
   "/community-reviews": {
     eyebrow: bilingual("Trust and review", "Konfyans ak revizyon"),

@@ -6,7 +6,7 @@ import SiteHeader from "./components/SiteHeader"
 import InfoPage from "./pages/InfoPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import { pageData } from "./pages/pageData"
-import { supportMailto } from "./siteConfig"
+import { SITE, supportMailto } from "./siteConfig"
 
 function Icon({ name, className = "" }) {
   return <img className={`icon ${className}`} src={`/icons/${name}.svg`} alt="" />
@@ -113,7 +113,7 @@ function LandingPage({ language }) {
             <h2 id="provider-title">{text.provider.title}</h2>
             <p>{text.provider.body}</p>
             <div className="button-row">
-              <a className="button button--gold" href="/list-your-business">{text.provider.primary}<Arrow /></a>
+              <a className="button button--gold" href={SITE.providerPortalURL}>{language === "ht" ? "Louvri espas founisè a" : "Open provider workspace"}<Arrow /></a>
               <a className="button button--ghost" href="/community-reviews">{text.provider.secondary}<Arrow /></a>
             </div>
             <p className="provider-section__note"><Icon name="file-lock" /> {text.provider.note}</p>

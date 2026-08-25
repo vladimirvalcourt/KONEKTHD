@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import BrandMark from "./BrandMark"
 import LanguageSwitch from "./LanguageSwitch"
+import { SITE } from "../siteConfig"
 
 export default function SiteHeader({ language, onLanguageChange, labels, isLanding }) {
   const [open, setOpen] = useState(false)
@@ -31,7 +32,7 @@ export default function SiteHeader({ language, onLanguageChange, labels, isLandi
               <>
                 <a href="/#experience">{labels.experience}</a>
                 <a href="/#language-access">{labels.language}</a>
-                <a href="/list-your-business">{labels.providers}</a>
+                <a href={SITE.providerPortalURL}>{labels.providers}</a>
                 <a href="/our-story">{labels.about}</a>
               </>
             )}
