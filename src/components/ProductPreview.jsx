@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, memo } from "react"
 import { availableProviderCategories, directionsUrl, isLikelyBookingUrl, loadPublishedProviders, providerCategory, providerMatches, safeExternalUrl, splitProvidersForState, stateFromCoordinates, stateFromZip } from "../providerDiscovery"
 
 const LOCATION_KEY = "konekt-search-state-v1"
