@@ -23,6 +23,94 @@ const serviceLabelsHT = {
   "immigration law": "Lalwa imigrasyon",
 }
 
+
+// ── Weekly Hours Calendar ──────────────────────────────────────────────────
+const DAY_KEYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+const DAY_LABELS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+const DAY_LABELS_HT = ["Lun", "Mar", "Mèk", "Jeu", "Ven", "Sam", "Dim"]
+
+function parseWeeklyHours(weekly_hours) {
+  if (!weekly_hours || typeof weekly_hours !== "object") return null
+  // Handle both { Mon: { open, close } } and array-of-day shapes
+  const entries = {}
+  for (const key of DAY_KEYS) {
+    const day = weekly_hours[key] || weekly_hours[key.toLowerCase()] || weekly_hours[key.toUpperCase()]
+    if (!day) continue
+    const open = day.open || day.opens || day.start || null
+    const close = day.close || day.closes || day.end || null
+    if (open && close) entries[key] = { open, close }
+    else if (day === "closed" || day.closed === true) entries[key] = null
+  }
+  return Object.keys(entries).length ? entries : null
+}
+
+function formatTime(t) {
+  if (!t) return ""
+  const [hStr, mStr] = t.split(":")
+  const h = parseInt(hStr, 10)
+  const m = mStr || "00"
+  const suffix = h < 12 ? "am" : "pm"
+  const hour = h % 12 || 12
+  return m === "00" ? `${hour}${suffix}` : `${hour}:${m}${suffix}`
+}
+
+function getTodayKey() {
+  return DAY_KEYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]
+}
+
+const WeeklyHours = memo(function WeeklyHours({ weekly_hours, hours_status_text, language }) {
+  const parsed = parseWeeklyHours(weekly_hours)
+  const isHT = language === "ht"
+  const todayKey = getTodayKey()
+
+  if (!parsed) {
+    if (!hours_status_text) return null
+    return (
+      <div className="hours-status-text">
+        <span className="hours-status-label">{isHT ? "Lè" : "Hours"}</span>
+        <span>{hours_status_text}</span>
+      </div>
+    )
+  }
+
+  const todayEntry = parsed[todayKey]
+  const isOpenToday = Boolean(todayEntry)
+
+  return (
+    <div className="weekly-hours">
+      <div className="weekly-hours__header">
+        <span className="weekly-hours__label">{isHT ? "Lè travay" : "Office hours"}</span>
+        <span className={`weekly-hours__today-pill ${isOpenToday ? "is-open" : "is-closed"}`}>
+          {isOpenToday
+            ? (isHT ? `Louvri jodiya · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}` : `Open today · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}`)
+            : (isHT ? "Fèmen jodiya" : "Closed today")}
+        </span>
+      </div>
+      <div className="weekly-hours__grid">
+        {DAY_KEYS.map((key, i) => {
+          const label = isHT ? DAY_LABELS_HT[i] : DAY_LABELS_EN[i]
+          const entry = parsed[key]
+          const isToday = key === todayKey
+          return (
+            <div key={key} className={`weekly-hours__row${isToday ? " is-today" : ""}${!entry ? " is-closed" : ""}`}>
+              <span className="weekly-hours__day">{label}</span>
+              <span className="weekly-hours__bar-wrap">
+                {entry ? <span className="weekly-hours__bar" /> : null}
+              </span>
+              <span className="weekly-hours__time">
+                {entry
+                  ? `${formatTime(entry.open)}–${formatTime(entry.close)}`
+                  : (isHT ? "Fèmen" : "Closed")}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+})
+// ──────────────────────────────────────────────────────────────────────────
+
 function getSavedLocation() {
   try {
     const saved = JSON.parse(window.localStorage.getItem(LOCATION_KEY))
@@ -69,7 +157,7 @@ function localizedLocation(value, language) {
 function providerDetails(provider, language) {
   const isHT = language === "ht"
   const items = []
-  if (provider.hours_status_text) items.push({ label: isHT ? "Lè" : "Hours", value: provider.hours_status_text })
+  // hours rendered by WeeklyHours component
   if (provider.service_area) items.push({ label: isHT ? "Zòn sèvis" : "Service area", value: localizedLocation(provider.service_area, language) })
   if (provider.accepting_new_patients) items.push({ label: isHT ? "Disponiblite" : "Availability", value: isHT ? "Aksepte nouvo kliyan oswa pasyan" : "Accepting new clients or patients" })
   if (provider.telehealth_available) items.push({ label: isHT ? "Opsyon" : "Options", value: isHT ? "Sèvis adistans disponib" : "Remote service available" })
@@ -115,6 +203,7 @@ function ProviderCard({ provider, language }) {
         <div className="preview-result__details-body">
           {description && <p>{description}</p>}
           {!!services.length && <div><strong>{isHT ? "Sèvis" : "Services"}</strong><p>{services.join(", ")}</p></div>}
+          <WeeklyHours weekly_hours={provider.weekly_hours} hours_status_text={provider.hours_status_text} language={language} />
           {details.map((item) => <div key={item.label}><strong>{item.label}</strong><p>{item.value}</p></div>)}
           <div className="preview-result__secondary-actions">
             {directions && <a href={directions} target="_blank" rel="noreferrer">{isHT ? "Jwenn direksyon" : "Directions"}</a>}

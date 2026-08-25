@@ -838,6 +838,131 @@ p {
   border-color: var(--gold-500);
 }
 
+/* ── Weekly Hours Calendar ──────────────────────────────────────── */
+.hours-status-text {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.72rem;
+  color: var(--ink-700);
+}
+
+.hours-status-label {
+  font-weight: 750;
+  color: var(--navy-950);
+  font-size: 0.72rem;
+}
+
+.weekly-hours {
+  margin: 2px 0 4px;
+}
+
+.weekly-hours__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.weekly-hours__label {
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--navy-950);
+}
+
+.weekly-hours__today-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+.weekly-hours__today-pill.is-open {
+  background: rgba(18, 53, 97, 0.09);
+  color: var(--navy-800);
+}
+
+.weekly-hours__today-pill.is-closed {
+  background: rgba(167, 45, 38, 0.09);
+  color: var(--red-700);
+}
+
+.weekly-hours__grid {
+  display: grid;
+  gap: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.weekly-hours__row {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 0;
+  font-size: 0.69rem;
+  line-height: 1.4;
+  transition: background 0.1s;
+}
+
+.weekly-hours__row.is-today {
+  background: rgba(18, 53, 97, 0.06);
+  border-radius: var(--radius-sm);
+}
+
+.weekly-hours__row.is-closed {
+  opacity: 0.5;
+}
+
+.weekly-hours__day {
+  font-weight: 750;
+  color: var(--navy-950);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.weekly-hours__row.is-today .weekly-hours__day {
+  color: var(--red-700);
+}
+
+.weekly-hours__bar-wrap {
+  display: flex;
+  align-items: center;
+  height: 4px;
+}
+
+.weekly-hours__bar {
+  display: block;
+  height: 3px;
+  width: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--navy-800), rgba(18, 53, 97, 0.3));
+}
+
+.weekly-hours__row.is-today .weekly-hours__bar {
+  background: linear-gradient(90deg, var(--red-700), rgba(167, 45, 38, 0.3));
+}
+
+.weekly-hours__time {
+  font-size: 0.68rem;
+  color: var(--ink-700);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.weekly-hours__row.is-today .weekly-hours__time {
+  color: var(--navy-950);
+  font-weight: 700;
+}
+/* ────────────────────────────────────────────────────────────────── */
+
 .preview-nationwide {
   margin-top: 12px;
   border-top: 2px solid var(--paper-200);
