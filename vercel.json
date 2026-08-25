@@ -18,9 +18,22 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/discover-businesses", "destination": "/index.html" },
+    { "source": "/list-your-business", "destination": "/index.html" },
+    { "source": "/community-reviews", "destination": "/index.html" },
+    { "source": "/download-the-app", "destination": "/index.html" },
+    { "source": "/our-story", "destination": "/index.html" },
+    { "source": "/mission-vision", "destination": "/index.html" },
+    { "source": "/community-partners", "destination": "/index.html" },
+    { "source": "/careers", "destination": "/index.html" },
+    { "source": "/help-center", "destination": "/index.html" },
+    { "source": "/contact-support", "destination": "/index.html" },
+    { "source": "/support", "destination": "/index.html" },
+    { "source": "/privacy-policy", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/index.html" },
+    { "source": "/terms", "destination": "/index.html" },
+    { "source": "/terms-of-service", "destination": "/index.html" },
+    { "source": "/age-rating", "destination": "/index.html" },
+    { "source": "/age-rating-questionnaire", "destination": "/index.html" }
   ]
 }
