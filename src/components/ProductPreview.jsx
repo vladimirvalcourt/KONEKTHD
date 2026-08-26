@@ -239,6 +239,22 @@ function verifiedLanguageAccess(provider, language) {
   return language === "ht" ? "KONEKT tcheke èd an Kreyòl la" : "Haitian Creole access verified"
 }
 
+function provenanceDetails(provider, language) {
+  if (!provider.identity_source_confirmed || !provider.contact_source_confirmed || !provider.source_count) return null
+  const isHT = language === "ht"
+  const checked = provider.last_source_checked_at
+    ? new Intl.DateTimeFormat(isHT ? "fr-HT" : "en-US", { year: "numeric", month: "short", day: "numeric" }).format(new Date(`${provider.last_source_checked_at}T12:00:00Z`))
+    : null
+  const references = Array.isArray(provider.source_references)
+    ? provider.source_references.filter((source) => safeExternalUrl(source?.url))
+    : []
+  return {
+    label: isHT ? "Lis sa a baze sou sous piblik" : "Source-backed listing",
+    checked: checked ? (isHT ? `Sous yo tcheke ${checked}` : `Sources checked ${checked}`) : null,
+    references,
+  }
+}
+
 function localizedLocation(value, language) {
   if (!value || language !== "ht") return value
   return value
@@ -277,6 +293,7 @@ function ProviderCard({ provider, language }) {
   const services = Array.isArray(provider.services) ? provider.services.filter(Boolean).map((service) => { const localized = isHT ? serviceLabelsHT[service.toLowerCase()] : null; return localized || formatLabel(service); }) : []
   const details = providerDetails(provider, language)
   const verifiedLanguage = verifiedLanguageAccess(provider, language)
+  const provenance = provenanceDetails(provider, language)
   return (
     <article className="preview-result">
       <div className="preview-result__summary">
@@ -285,6 +302,7 @@ function ProviderCard({ provider, language }) {
         <p>{[formatLabel(specialty || provider.category), localizedLocation(provider.address, language)].filter(Boolean).join(" · ")}</p>
         <span className="preview-language-badge">{languageAccess(provider, language)}</span>
           {verifiedLanguage && <span className="preview-verified-badge">{verifiedLanguage}</span>}
+          {provenance && <span className="preview-source-badge">{provenance.label}</span>}
         </div>
         <div className="preview-result__actions">
           {phone && <a href={`tel:${phone}`}>{isHT ? "Rele" : "Call"}</a>}
@@ -299,6 +317,7 @@ function ProviderCard({ provider, language }) {
           {!!services.length && <div><strong>{isHT ? "Sèvis" : "Services"}</strong><p>{services.join(", ")}</p></div>}
           <WeeklyHours weekly_hours={provider.weekly_hours} hours_status_text={provider.hours_status_text} language={language} />
           {details.map((item) => <div key={item.label}><strong>{item.label}</strong><p>{item.value}</p></div>)}
+          {provenance && <div className="preview-provenance"><strong>{isHT ? "Sous piblik" : "Public sources"}</strong>{provenance.checked && <p>{provenance.checked}</p>}{!!provenance.references.length && <ul>{provenance.references.map((source, index) => <li key={`${source.url}-${index}`}><a href={safeExternalUrl(source.url)} target="_blank" rel="noreferrer">{isHT ? `Gade sous ${index + 1}` : `View source ${index + 1}`}</a></li>)}</ul>}<small>{isHT ? "Sous piblik yo sipòte enfòmasyon lis la. Sa pa vle di KONEKT verifye founisè a." : "Public sources support this listing. This is separate from KONEKT provider verification."}</small></div>}
           <div className="preview-result__secondary-actions">
             {directions && <a href={directions} target="_blank" rel="noreferrer">{isHT ? "Jwenn direksyon" : "Directions"}</a>}
             {booking && primaryWebsite && <a href={primaryWebsite} target="_blank" rel="noreferrer">{isHT ? "Sit entènèt" : "Website"}</a>}

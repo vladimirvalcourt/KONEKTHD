@@ -87,10 +87,11 @@ export function directionsUrl(provider) {
 export function loadPublishedProviders() {
   if (providerRequest) return providerRequest
   const { url, key } = configuredSupabase()
-  const columns = ["id", "name", "business_name", "category", "specialty", "specialty_ht", "description", "description_ht", "phone", "website", "appointment_url", "address", "service_area", "latitude", "longitude", "image_url", "services", "language_access_type", "language_verification_status", "business_verification_status", "accepting_new_patients", "hours_status_text", "weekly_hours", "insurance_accepted", "medicaid_accepted", "medicare_accepted", "telehealth_available", "last_verified_at"].join(",")
+  const baseColumns = ["id", "name", "business_name", "category", "specialty", "specialty_ht", "description", "description_ht", "phone", "website", "appointment_url", "address", "service_area", "latitude", "longitude", "image_url", "services", "language_access_type", "language_verification_status", "business_verification_status", "accepting_new_patients", "hours_status_text", "weekly_hours", "insurance_accepted", "medicaid_accepted", "medicare_accepted", "telehealth_available", "last_verified_at"]
+  const publicColumns = [...baseColumns, "source_count", "identity_source_confirmed", "language_source_confirmed", "contact_source_confirmed", "last_source_checked_at", "source_freshness", "source_references"].join(",")
   const headers = { apikey: key }
-  const publicEndpoint = `${url}/rest/v1/public_provider_directory?select=${columns}&order=name.asc`
-  const compatibleEndpoint = `${url}/rest/v1/providers?select=${columns}&publication_status=eq.PUBLISHED&order=name.asc`
+  const publicEndpoint = `${url}/rest/v1/public_provider_directory?select=${publicColumns}&order=name.asc`
+  const compatibleEndpoint = `${url}/rest/v1/providers?select=${baseColumns.join(",")}&publication_status=eq.PUBLISHED&order=name.asc`
   providerRequest = fetch(publicEndpoint, { headers }).then(async (response) => {
     if (response.ok) return response.json()
     if (response.status !== 404) throw new Error(`provider-directory-${response.status}`)
