@@ -21,6 +21,12 @@ const serviceLabelsHT = {
   bookkeeping: "Kontablite",
   "legal services": "Sèvis legal",
   "immigration law": "Lalwa imigrasyon",
+  doula: "Doula",
+  "doula services": "Sèvis doula",
+  "doula care": "Swen doula",
+  "maternal care": "Swen matènite",
+  "birth doula": "Doula pou akouchman",
+  "postpartum doula": "Doula apre akouchman",
 }
 
 

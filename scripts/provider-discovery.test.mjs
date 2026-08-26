@@ -7,12 +7,13 @@ const providers = [
   { id: "multi", name: "Remote Therapy", category: "Healthcare", address: "Telehealth service in CO, FL, MN, OR, and WA" },
   { id: "national", name: "National Legal Help", category: "Legal", address: "Nationwide remote service" },
   { id: "translation", name: "Kreyol Translation", category: "Translation & Interpretation", address: "Miami, FL" },
+  { id: "doula", name: "Kreyol Doula Care", category: "Healthcare", specialty: "Doula & Maternal Care", address: "Miami, FL 33138", services: ["doula care"] },
 ]
 
 test("extracts state coverage without turning nationwide records into local matches", () => {
   assert.deepEqual(providerStateCodes(providers[1]), ["CO", "FL", "MN", "OR", "WA"])
   assert.equal(isNationwideProvider(providers[2]), true)
-  assert.deepEqual(splitProvidersForState(providers, "FL").local.map(({ id }) => id), ["fl", "multi", "translation"])
+  assert.deepEqual(splitProvidersForState(providers, "FL").local.map(({ id }) => id), ["fl", "multi", "translation", "doula"])
   assert.deepEqual(splitProvidersForState(providers, "FL").nationwide.map(({ id }) => id), ["national"])
 })
 
@@ -22,6 +23,8 @@ test("searches provider-facing fields and normalizes categories", () => {
   assert.equal(providerMatches(providers[0], { category: "legal", query: "" }), false)
   assert.equal(providerCategory(providers[3]), "translation")
   assert.equal(providerMatches(providers[3], { category: "translation", query: "Kreyol" }), true)
+  assert.equal(providerCategory(providers[4]), "healthcare")
+  assert.equal(providerMatches(providers[4], { category: "healthcare", query: "doula" }), true)
   assert.deepEqual(availableProviderCategories(providers), ["healthcare", "legal", "translation"])
 })
 

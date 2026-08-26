@@ -39,7 +39,7 @@ export const copy = {
       body: "Each profile shows details that fit the service, such as insurance for healthcare, appointment links, business hours, and contact information.",
       explore: "Search providers",
       categories: [
-        { icon: "first-aid", title: "Healthcare", text: "Clinics, doctors, mental health, pharmacies, and insurance details." },
+        { icon: "first-aid", title: "Healthcare", text: "Clinics, doctors, doulas, mental health, pharmacies, and insurance details." },
         { icon: "scales", title: "Legal & Immigration", text: "Immigration, family law, estates, and practical legal support." },
         { icon: "calculator", title: "Tax & Financial", text: "Tax preparation, bookkeeping, credit, and financial guidance." },
         { icon: "house", title: "Real Estate & Housing", text: "Housing services, rentals, home support, and real estate." },
@@ -50,7 +50,7 @@ export const copy = {
     provider: {
       eyebrow: "For providers",
       title: "Help people find and understand your service.",
-      body: "First, create a provider account or sign in. Then request permission to manage an existing service, or add a new profile with your contact details, hours, services, and Haitian Creole support.",
+      body: "First, create a provider account or sign in. Then request permission to manage an existing service, or add a new profile with your contact details, hours, services, languages spoken, and language support options.",
       primary: "Open provider account",
       secondary: "Learn how KONEKT reviews profiles",
     },
@@ -102,7 +102,7 @@ export const copy = {
       body: "Chak pwofil montre enfòmasyon ki mache ak sèvis la, tankou asirans pou swen sante, lyen randevou, lè biznis, ak kontak.",
       explore: "Chèche founisè",
       categories: [
-        { icon: "first-aid", title: "Swen sante", text: "Klinik, doktè, sante mantal, famasi, ak enfòmasyon sou asirans." },
+        { icon: "first-aid", title: "Swen sante", text: "Klinik, doktè, doula, sante mantal, famasi, ak enfòmasyon sou asirans." },
         { icon: "scales", title: "Lalwa ak Imigrasyon", text: "Imigrasyon, dwa fanmi, byen ak testaman, ak sipò legal." },
         { icon: "calculator", title: "Taks ak Finans", text: "Preparasyon taks, kontablite, kredi, ak konsèy finansye." },
         { icon: "house", title: "Kay ak Imobilye", text: "Lwaye, sèvis pou kay, sipò lojman, ak imobilye." },
@@ -113,7 +113,7 @@ export const copy = {
     provider: {
       eyebrow: "Pou founisè",
       title: "Ede moun jwenn sèvis ou epi konprann sa ou ofri.",
-      body: "Premyèman, kreye yon kont founisè oswa konekte. Apre sa, mande pèmisyon pou jere yon sèvis ki deja nan lis la, oswa ajoute yon nouvo pwofil ak kontak, lè, sèvis, ak fason moun ka jwenn èd an Kreyòl.",
+      body: "Premyèman, kreye yon kont founisè oswa konekte. Apre sa, mande pèmisyon pou jere yon sèvis ki deja nan lis la, oswa ajoute yon nouvo pwofil ak kontak, lè, sèvis, lang ekip la pale, ak fason moun ka jwenn èd nan lang yo.",
       primary: "Louvri kont founisè a",
       secondary: "Kijan KONEKT tcheke pwofil yo",
     },
