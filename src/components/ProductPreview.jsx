@@ -29,17 +29,35 @@ const DAY_KEYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 const DAY_LABELS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 const DAY_LABELS_HT = ["Lun", "Mar", "Mèk", "Jeu", "Ven", "Sam", "Dim"]
 
+const DAY_ALIAS_MAP = {
+  monday: "Mon", tuesday: "Tue", wednesday: "Wed", thursday: "Thu",
+  friday: "Fri", saturday: "Sat", sunday: "Sun",
+  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun"
+}
+
 function parseWeeklyHours(weekly_hours) {
   if (!weekly_hours || typeof weekly_hours !== "object") return null
-  // Handle both { Mon: { open, close } } and array-of-day shapes
   const entries = {}
-  for (const key of DAY_KEYS) {
-    const day = weekly_hours[key] || weekly_hours[key.toLowerCase()] || weekly_hours[key.toUpperCase()]
-    if (!day) continue
-    const open = day.open || day.opens || day.start || null
-    const close = day.close || day.closes || day.end || null
-    if (open && close) entries[key] = { open, close }
-    else if (day === "closed" || day.closed === true) entries[key] = null
+  for (const [rawKey, val] of Object.entries(weekly_hours)) {
+    if (!val) continue
+    const normKey = DAY_ALIAS_MAP[rawKey.toLowerCase().trim()]
+    if (!normKey) continue
+    if (typeof val === "object") {
+      const open = val.open || val.opens || val.start || null
+      const close = val.close || val.closes || val.end || null
+      if (open && close) entries[normKey] = { open, close }
+      else if (val.closed === true || val === "closed") entries[normKey] = null
+    } else if (typeof val === "string") {
+      const str = val.trim()
+      if (str.toLowerCase() === "closed" || !str) {
+        entries[normKey] = null
+      } else {
+        const parts = str.split(/[-–—]/).map(s => s.trim())
+        if (parts.length === 2) {
+          entries[normKey] = { open: parts[0], close: parts[1] }
+        }
+      }
+    }
   }
   return Object.keys(entries).length ? entries : null
 }
