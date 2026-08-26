@@ -62,11 +62,26 @@ function parseWeeklyHours(weekly_hours) {
   return Object.keys(entries).length ? entries : null
 }
 
+function parseTimeToMinutes(t) {
+  if (!t) return null
+  const match = String(t).match(/(\d+):?(\d+)?\s*(AM|PM|am|pm)?/i)
+  if (!match) return null
+  let hours = parseInt(match[1], 10)
+  const minutes = parseInt(match[2] || "0", 10)
+  const ampm = match[3] ? match[3].toUpperCase() : null
+  if (ampm === "PM" && hours < 12) hours += 12
+  if (ampm === "AM" && hours === 12) hours = 0
+  return hours * 60 + minutes
+}
+
 function formatTime(t) {
   if (!t) return ""
-  const [hStr, mStr] = t.split(":")
-  const h = parseInt(hStr, 10)
-  const m = mStr || "00"
+  const str = String(t).trim()
+  if (/AM|PM/i.test(str)) return str
+  const parts = str.split(":")
+  if (parts.length < 2) return str
+  const h = parseInt(parts[0], 10)
+  const m = parts[1].slice(0, 2)
   const suffix = h < 12 ? "am" : "pm"
   const hour = h % 12 || 12
   return m === "00" ? `${hour}${suffix}` : `${hour}:${m}${suffix}`
@@ -74,6 +89,58 @@ function formatTime(t) {
 
 function getTodayKey() {
   return DAY_KEYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]
+}
+
+function getTodayStatus(todayEntry, language) {
+  const isHT = language === "ht"
+  if (!todayEntry) return { isOpen: false, text: isHT ? "Fèmen jodiya" : "Closed today" }
+
+  const now = new Date()
+  const nowMins = now.getHours() * 60 + now.getMinutes()
+  const openMins = parseTimeToMinutes(todayEntry.open)
+  const closeMins = parseTimeToMinutes(todayEntry.close)
+
+  if (openMins === null || closeMins === null) {
+    return {
+      isOpen: true,
+      text: isHT
+        ? `Louvri jodiya · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}`
+        : `Open today · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}`
+    }
+  }
+
+  if (nowMins >= openMins && nowMins < closeMins) {
+    const minsLeft = closeMins - nowMins
+    if (minsLeft <= 60) {
+      return {
+        isOpen: true,
+        isClosingSoon: true,
+        text: isHT
+          ? `Ap fèmen bento (${minsLeft} min) · Lè fèmen: ${formatTime(todayEntry.close)}`
+          : `Closing soon (${minsLeft}m left) · Closes at ${formatTime(todayEntry.close)}`
+      }
+    }
+    return {
+      isOpen: true,
+      text: isHT
+        ? `Louvri kounye a · Ap fèmen nan ${formatTime(todayEntry.close)}`
+        : `Open now · Closes at ${formatTime(todayEntry.close)}`
+    }
+  }
+
+  if (nowMins < openMins) {
+    return {
+      isOpen: false,
+      text: isHT
+        ? `Fèmen kounye a · Ap louvri nan ${formatTime(todayEntry.open)}`
+        : `Closed now · Opens at ${formatTime(todayEntry.open)}`
+    }
+  }
+
+  return {
+    isOpen: false,
+    text: isHT ? "Fèmen pou jodiya" : "Closed for the day"
+  }
 }
 
 const WeeklyHours = memo(function WeeklyHours({ weekly_hours, hours_status_text, language }) {
@@ -92,16 +159,14 @@ const WeeklyHours = memo(function WeeklyHours({ weekly_hours, hours_status_text,
   }
 
   const todayEntry = parsed[todayKey]
-  const isOpenToday = Boolean(todayEntry)
+  const todayStatus = getTodayStatus(todayEntry, language)
 
   return (
     <div className="weekly-hours">
       <div className="weekly-hours__header">
         <span className="weekly-hours__label">{isHT ? "Lè travay" : "Office hours"}</span>
-        <span className={`weekly-hours__today-pill ${isOpenToday ? "is-open" : "is-closed"}`}>
-          {isOpenToday
-            ? (isHT ? `Louvri jodiya · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}` : `Open today · ${formatTime(todayEntry.open)}–${formatTime(todayEntry.close)}`)
-            : (isHT ? "Fèmen jodiya" : "Closed today")}
+        <span className={`weekly-hours__today-pill ${todayStatus.isOpen ? (todayStatus.isClosingSoon ? "is-warning" : "is-open") : "is-closed"}`}>
+          {todayStatus.text}
         </span>
       </div>
       <div className="weekly-hours__grid">

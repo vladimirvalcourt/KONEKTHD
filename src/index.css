@@ -887,6 +887,12 @@ p {
   color: var(--navy-800);
 }
 
+
+.weekly-hours__today-pill.is-warning {
+  background: rgba(216, 167, 70, 0.15);
+  color: #8f6005;
+}
+
 .weekly-hours__today-pill.is-closed {
   background: rgba(167, 45, 38, 0.09);
   color: var(--red-700);
