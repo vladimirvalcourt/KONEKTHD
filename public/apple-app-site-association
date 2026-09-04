@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["U8LRLPXCF4.com.vladimirvalcourt.konekt"],
+        "components": [
+          {
+            "/": "/provider/*",
+            "comment": "Open published provider profiles in KONEKT."
+          }
+        ]
+      }
+    ]
+  }
+}

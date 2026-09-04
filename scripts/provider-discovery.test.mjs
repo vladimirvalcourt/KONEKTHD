@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import { availableProviderCategories, directionsUrl, isLikelyBookingUrl, isNationwideProvider, providerCategory, providerMatches, providerStateCodes, safeExternalUrl, splitProvidersForState } from "../src/providerDiscovery.js"
+import { availableProviderCategories, directionsUrl, findPublishedProvider, isLikelyBookingUrl, isNationwideProvider, providerCategory, providerMatches, providerStateCodes, safeExternalUrl, splitProvidersForState } from "../src/providerDiscovery.js"
 
 const providers = [
   { id: "fl", name: "Miami Family Clinic", category: "Healthcare", specialty: "Primary care", address: "Miami, FL 33101", services: ["family medicine"] },
@@ -38,4 +38,11 @@ test("distinguishes booking destinations and builds directions safely", () => {
   assert.equal(isLikelyBookingUrl("https://example.com/request-an-appointment"), true)
   assert.equal(isLikelyBookingUrl("https://example.com/providers/jane-doe"), false)
   assert.equal(directionsUrl({ address: "100 Main St, Miami, FL" }), "https://www.google.com/maps/dir/?api=1&destination=100+Main+St%2C+Miami%2C+FL")
+})
+
+test("resolves a shared provider link only to a published directory record", () => {
+  const records = [{ id: "AAAAAAAA-BBBB-4CCC-8DDD-EEEEEEEEEEEE", name: "Shared Provider" }]
+  assert.equal(findPublishedProvider(records, "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee")?.name, "Shared Provider")
+  assert.equal(findPublishedProvider(records, "not-published"), null)
+  assert.equal(findPublishedProvider(records, ""), null)
 })

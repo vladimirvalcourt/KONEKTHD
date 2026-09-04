@@ -59,6 +59,12 @@ export function splitProvidersForState(providers, stateCode) {
   }
 }
 
+export function findPublishedProvider(providers, providerID) {
+  const normalizedID = providerID?.trim().toLowerCase()
+  if (!normalizedID) return null
+  return providers.find((provider) => provider.id?.toLowerCase() === normalizedID) || null
+}
+
 export function safeExternalUrl(value) {
   if (!value) return null
   try {

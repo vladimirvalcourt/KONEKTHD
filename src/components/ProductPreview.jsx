@@ -278,7 +278,7 @@ function providerDetails(provider, language) {
   return items
 }
 
-function ProviderCard({ provider, language }) {
+export function ProviderCard({ provider, language, expanded = false }) {
   const isHT = language === "ht"
   const name = provider.business_name || provider.name
   const category = providerCategory(provider)
@@ -298,7 +298,7 @@ function ProviderCard({ provider, language }) {
     <article className="preview-result">
       <div className="preview-result__summary">
         <div className="preview-result__copy">
-        <h3>{name}</h3>
+        <h3><a className="preview-result__profile-link" href={`/provider/${provider.id}`}>{name}</a></h3>
         <p>{[formatLabel(specialty || provider.category), localizedLocation(provider.address, language)].filter(Boolean).join(" · ")}</p>
         <span className="preview-language-badge">{languageAccess(provider, language)}</span>
           {verifiedLanguage && <span className="preview-verified-badge">{verifiedLanguage}</span>}
@@ -310,7 +310,7 @@ function ProviderCard({ provider, language }) {
           {primaryWebsite && <a href={primaryWebsite} target="_blank" rel="noreferrer">{isHT ? "Sit entènèt" : "Website"}</a>}
         </div>
       </div>
-      <details className="preview-result__details">
+      <details className="preview-result__details" open={expanded || undefined}>
         <summary>{isHT ? "Gade detay" : "View details"}</summary>
         <div className="preview-result__details-body">
           {description && <p>{description}</p>}

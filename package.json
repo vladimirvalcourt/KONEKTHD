@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test:content": "node scripts/content-audit.mjs",
     "test:discovery": "node --test scripts/provider-discovery.test.mjs",
-    "check": "npm run lint && npm run test:content && npm run test:discovery && npm run build",
+    "check": "pnpm run lint && pnpm run test:content && pnpm run test:discovery && pnpm run build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -5,6 +5,7 @@ import SiteFooter from "./components/SiteFooter"
 import SiteHeader from "./components/SiteHeader"
 import InfoPage from "./pages/InfoPage"
 import NotFoundPage from "./pages/NotFoundPage"
+import ProviderPage from "./pages/ProviderPage"
 import { pageData } from "./pages/pageData"
 import { SITE, supportMailto } from "./siteConfig"
 
@@ -147,6 +148,8 @@ export default function App() {
   })
   const pathname = normalizePath(window.location.pathname)
   const isLanding = pathname === "/"
+  const providerMatch = pathname.match(/^\/provider\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i)
+  const providerID = providerMatch?.[1]
   const activePage = pageData[pathname]
   const labels = copy[language].nav
 
@@ -160,15 +163,19 @@ export default function App() {
       document.title = language === "ht" ? "KONEKT — Jwenn sèvis ak èd an Kreyòl" : "KONEKT — Find services and Haitian Creole support"
       return
     }
+    if (providerID) {
+      document.title = language === "ht" ? "Pwofil founisè | KONEKT" : "Provider profile | KONEKT"
+      return
+    }
     const pageTitle = activePage?.title?.[language] || activePage?.title?.en
     document.title = pageTitle ? `${pageTitle} | KONEKT` : "Page not found | KONEKT"
-  }, [activePage, isLanding, language])
+  }, [activePage, isLanding, language, providerID])
 
   return (
     <>
       <a className="skip-link" href="#main-content">{copy[language].skip}</a>
       <SiteHeader language={language} onLanguageChange={setLanguage} labels={labels} isLanding={isLanding} />
-      {isLanding ? <LandingPage language={language} /> : activePage ? <InfoPage page={activePage} language={language} /> : <NotFoundPage language={language} />}
+      {isLanding ? <LandingPage language={language} /> : providerID ? <ProviderPage providerID={providerID} language={language} /> : activePage ? <InfoPage page={activePage} language={language} /> : <NotFoundPage language={language} />}
       <SiteFooter language={language} onLanguageChange={setLanguage} />
     </>
   )
